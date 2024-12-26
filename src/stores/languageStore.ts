@@ -40,7 +40,13 @@ export const translations = {
     deleteTransaction: "Delete Transaction",
     transactionAdded: "Transaction added successfully",
     transactionUpdated: "Transaction updated successfully",
-    transactionDeleted: "Transaction deleted successfully"
+    transactionDeleted: "Transaction deleted successfully",
+    welcomeTitle: "Welcome to Smart Money Dashboard!",
+    welcomeDesc: "Track your finances, set goals, and manage transactions all in one place.",
+    welcomeFeature1: "Track Income & Expenses",
+    welcomeFeature2: "Set Financial Goals",
+    welcomeFeature3: "Analyze Your Spending",
+    welcomeFeature4: "AI-Powered Insights"
   },
   ar: {
     currentBalance: "الرصيد الحالي",
@@ -74,7 +80,13 @@ export const translations = {
     deleteTransaction: "حذف المعاملة",
     transactionAdded: "تمت إضافة المعاملة بنجاح",
     transactionUpdated: "تم تحديث المعاملة بنجاح",
-    transactionDeleted: "تم حذف المعاملة بنجاح"
+    transactionDeleted: "تم حذف المعاملة بنجاح",
+    welcomeTitle: "مرحباً بك في لوحة تحكم الأموال الذكية!",
+    welcomeDesc: "تتبع أموالك، حدد أهدافك، وأدر معاملاتك في مكان واحد.",
+    welcomeFeature1: "تتبع الدخل والمصروفات",
+    welcomeFeature2: "حدد أهدافك المالية",
+    welcomeFeature3: "حلل مصروفاتك",
+    welcomeFeature4: "تحليلات مدعومة بالذكاء الاصطناعي"
   },
   es: {
     currentBalance: "Balance Actual",
@@ -94,6 +106,12 @@ export const translations = {
     recentTransactions: "Transacciones Recientes",
     updateTransaction: "Actualizar Transacción",
     deleteTransaction: "Eliminar Transacción",
+    transactionAdded: "Transacción agregada exitosamente",
+    transactionUpdated: "Transacción actualizada exitosamente",
+    transactionDeleted: "Transacción eliminada exitosamente",
+    addTransaction: "Agregar Transacción",
+    updateTransaction: "Actualizar Transacción",
+    deleteTransaction: "Eliminar Transacción"
   },
   fr: {
     currentBalance: "Solde Actuel",
@@ -113,6 +131,12 @@ export const translations = {
     recentTransactions: "Transactions Récentes",
     updateTransaction: "Mettre à jour l'objectif",
     deleteTransaction: "Supprimer la transaction",
+    transactionAdded: "Transaction ajoutée avec succès",
+    transactionUpdated: "Transaction mise à jour avec succès",
+    transactionDeleted: "Transaction supprimée avec succès",
+    addTransaction: "Ajouter une Transaction",
+    updateTransaction: "Mettre à jour la Transaction",
+    deleteTransaction: "Supprimer la Transaction"
   }
 };
 

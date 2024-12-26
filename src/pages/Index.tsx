@@ -1,4 +1,4 @@
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import { BalanceCard } from "@/components/dashboard/BalanceCard";
 import { ExpenseChart } from "@/components/dashboard/ExpenseChart";
 import { RecentTransactions } from "@/components/dashboard/RecentTransactions";
@@ -7,6 +7,7 @@ import { AIAssistant } from "@/components/dashboard/AIAssistant";
 import { Transaction } from "@/types/props";
 import { useLanguageStore, translations } from "@/stores/languageStore";
 import { LanguageSwitcher } from "@/components/LanguageSwitcher";
+import { toast } from "sonner";
 
 const initialTransactions: Transaction[] = [
   {
@@ -36,6 +37,34 @@ const Index = () => {
   const [transactions, setTransactions] = useState<Transaction[]>(initialTransactions);
   const { language } = useLanguageStore();
   const t = translations[language];
+
+  useEffect(() => {
+    // Show welcome messages with a slight delay between each
+    const showWelcomeMessages = () => {
+      toast(t.welcomeTitle, {
+        description: t.welcomeDesc,
+        duration: 5000,
+      });
+
+      setTimeout(() => {
+        toast(t.welcomeFeature1, { duration: 3000 });
+      }, 1000);
+
+      setTimeout(() => {
+        toast(t.welcomeFeature2, { duration: 3000 });
+      }, 2000);
+
+      setTimeout(() => {
+        toast(t.welcomeFeature3, { duration: 3000 });
+      }, 3000);
+
+      setTimeout(() => {
+        toast(t.welcomeFeature4, { duration: 3000 });
+      }, 4000);
+    };
+
+    showWelcomeMessages();
+  }, [language, t]);
 
   const calculateTotals = () => {
     const income = transactions
