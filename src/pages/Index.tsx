@@ -49,7 +49,17 @@ const Index = () => {
         return acc;
       }, {} as Record<string, number>);
 
-    const colors = ["#3B82F6", "#10B981", "#F59E0B", "#6366F1", "#EC4899"];
+    const colors = [
+      "#3B82F6", // Blue
+      "#10B981", // Green
+      "#F59E0B", // Yellow
+      "#6366F1", // Indigo
+      "#EC4899", // Pink
+      "#8B5CF6", // Purple
+      "#14B8A6", // Teal
+      "#F43F5E", // Rose
+    ];
+
     return Object.entries(expensesByCategory).map(([name, value], index) => ({
       name,
       value,
