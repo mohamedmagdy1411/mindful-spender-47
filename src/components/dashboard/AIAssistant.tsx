@@ -1,11 +1,10 @@
-import { useState, useEffect } from "react";
+import { useState } from "react";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { Textarea } from "@/components/ui/textarea";
 import { Send } from "lucide-react";
 import { toast } from "sonner";
 import { BaseProps } from "@/types/props";
-import { Input } from "@/components/ui/input";
 
 interface AIAssistantProps extends BaseProps {
   onAddTransaction: (transaction: {
@@ -20,17 +19,7 @@ const DEFAULT_API_KEY = "AIzaSyBzf8G9oFSfdI-8fc7bjFHw5JdXxOUrA-g";
 export const AIAssistant = ({ className, onAddTransaction }: AIAssistantProps) => {
   const [text, setText] = useState("");
   const [isProcessing, setIsProcessing] = useState(false);
-  const [apiKey, setApiKey] = useState(() => {
-    // Try to get the API key from localStorage, if not found use default
-    return localStorage.getItem('gemini_api_key') || DEFAULT_API_KEY;
-  });
-
-  // Save API key to localStorage whenever it changes
-  useEffect(() => {
-    if (apiKey && apiKey !== DEFAULT_API_KEY) {
-      localStorage.setItem('gemini_api_key', apiKey);
-    }
-  }, [apiKey]);
+  const [apiKey] = useState(DEFAULT_API_KEY);
 
   const processActivity = async (activity: string) => {
     try {
@@ -96,17 +85,6 @@ export const AIAssistant = ({ className, onAddTransaction }: AIAssistantProps) =
       </CardHeader>
       <CardContent>
         <div className="space-y-4">
-          <div className="space-y-2">
-            <label className="text-sm font-medium">مفتاح API من Google (اختياري)</label>
-            <Input
-              type="password"
-              value={apiKey === DEFAULT_API_KEY ? "" : apiKey}
-              onChange={(e) => setApiKey(e.target.value || DEFAULT_API_KEY)}
-              placeholder="أدخل مفتاح API الخاص بك (اختياري)"
-              className="w-full"
-            />
-          </div>
-          
           <div className="space-y-2">
             <label className="text-sm font-medium">أخبرني عن يومك</label>
             <Textarea
