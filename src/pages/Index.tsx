@@ -2,6 +2,7 @@ import { useState } from "react";
 import { BalanceCard } from "@/components/dashboard/BalanceCard";
 import { ExpenseChart } from "@/components/dashboard/ExpenseChart";
 import { RecentTransactions } from "@/components/dashboard/RecentTransactions";
+import { GoalTracker } from "@/components/dashboard/GoalTracker";
 
 const initialTransactions = [
   {
@@ -98,6 +99,7 @@ const Index = () => {
           expenses={expenses}
         />
         <ExpenseChart data={getExpenseData()} />
+        <GoalTracker totalSavings={balance} />
         <RecentTransactions
           transactions={transactions}
           onAddTransaction={handleAddTransaction}
