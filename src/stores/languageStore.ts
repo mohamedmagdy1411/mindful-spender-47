@@ -34,6 +34,9 @@ export const translations = {
     updateGoal: "Update Goal",
     remaining: "Remaining",
     achieved: "Achieved",
+    recentTransactions: "Recent Transactions",
+    updateTransaction: "Update Transaction",
+    deleteTransaction: "Delete Transaction",
   },
   ar: {
     currentBalance: "الرصيد الحالي",
@@ -61,6 +64,9 @@ export const translations = {
     updateGoal: "تحديث الهدف",
     remaining: "المتبقي",
     achieved: "تم تحقيق",
+    recentTransactions: "المعاملات الأخيرة",
+    updateTransaction: "تحديث المعاملة",
+    deleteTransaction: "حذف المعاملة",
   },
   es: {
     currentBalance: "Balance Actual",
@@ -77,6 +83,9 @@ export const translations = {
     smartMoneyDashboard: "Panel de Control Financiero",
     tellMeAboutYourDay: "Cuéntame sobre tu día",
     processText: "Procesar Texto",
+    recentTransactions: "Transacciones Recientes",
+    updateTransaction: "Actualizar Transacción",
+    deleteTransaction: "Eliminar Transacción",
   },
   fr: {
     currentBalance: "Solde Actuel",
@@ -93,6 +102,9 @@ export const translations = {
     smartMoneyDashboard: "Tableau de Bord Financier",
     tellMeAboutYourDay: "Racontez-moi votre journée",
     processText: "Traiter le Texte",
+    recentTransactions: "Transactions Récentes",
+    updateTransaction: "Mettre à jour l'objectif",
+    deleteTransaction: "Supprimer la transaction",
   }
 };
 

@@ -1,6 +1,5 @@
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
-import { Progress } from "@/components/ui/progress";
-import { PlusIcon, PencilIcon, TrashIcon } from "lucide-react";
+import { PlusIcon } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { useState } from "react";
 import {
@@ -20,7 +19,8 @@ import {
 } from "@/components/ui/select";
 import { toast } from "sonner";
 import { BaseProps } from "@/types/props";
-import { useLanguageStore, translations, formatNumber } from "@/stores/languageStore";
+import { useLanguageStore, translations } from "@/stores/languageStore";
+import { GoalItem } from "./goals/GoalItem";
 
 interface Goal {
   id: string;
@@ -110,10 +110,6 @@ export const GoalTracker = ({ totalSavings, className }: GoalTrackerProps) => {
     toast.success(language === 'ar' ? "تم حذف الهدف بنجاح" : "Goal deleted successfully");
   };
 
-  const calculateProgress = (currentAmount: number, targetAmount: number) => {
-    return Math.min((currentAmount / targetAmount) * 100, 100);
-  };
-
   return (
     <Card className={className}>
       <CardHeader className="flex flex-row items-center justify-between">
@@ -128,58 +124,14 @@ export const GoalTracker = ({ totalSavings, className }: GoalTrackerProps) => {
       </CardHeader>
       <CardContent>
         <div className="space-y-6">
-          {goals.map((goal) => {
-            const progress = calculateProgress(goal.currentAmount, goal.targetAmount);
-            return (
-              <div
-                key={goal.id}
-                className="space-y-2 animate-fade-in p-4 rounded-lg bg-muted/50 hover:bg-muted/70 transition-all"
-              >
-                <div className="flex justify-between items-start">
-                  <div>
-                    <span className="font-medium">{goal.name}</span>
-                    {goal.description && (
-                      <p className="text-sm text-muted-foreground mt-1">
-                        {goal.description}
-                      </p>
-                    )}
-                  </div>
-                  <div className="flex space-x-2">
-                    <Button
-                      variant="ghost"
-                      size="icon"
-                      onClick={() => setEditingGoal(goal)}
-                    >
-                      <PencilIcon className="h-4 w-4" />
-                    </Button>
-                    <Button
-                      variant="ghost"
-                      size="icon"
-                      onClick={() => handleDeleteGoal(goal.id)}
-                    >
-                      <TrashIcon className="h-4 w-4" />
-                    </Button>
-                  </div>
-                </div>
-                <div className="flex justify-between items-center text-sm">
-                  <span className="text-muted-foreground">
-                    {formatNumber(goal.currentAmount, language)} / {formatNumber(goal.targetAmount, language)}
-                  </span>
-                  <span className="font-medium">{Math.round(progress)}%</span>
-                </div>
-                <Progress
-                  value={progress}
-                  className={`h-2 ${getProgressColor(progress)}`}
-                />
-                {goal.targetDate && (
-                  <div className="text-sm text-muted-foreground mt-2">
-                    {language === 'ar' ? "تاريخ الهدف: " : "Target Date: "}
-                    {new Date(goal.targetDate).toLocaleDateString()}
-                  </div>
-                )}
-              </div>
-            );
-          })}
+          {goals.map((goal) => (
+            <GoalItem
+              key={goal.id}
+              goal={goal}
+              onEdit={setEditingGoal}
+              onDelete={handleDeleteGoal}
+            />
+          ))}
         </div>
       </CardContent>
 
