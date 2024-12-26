@@ -104,14 +104,18 @@ export const translations = {
     tellMeAboutYourDay: "Cuéntame sobre tu día",
     processText: "Procesar Texto",
     recentTransactions: "Transacciones Recientes",
+    addTransaction: "Agregar Transacción",
     updateTransaction: "Actualizar Transacción",
     deleteTransaction: "Eliminar Transacción",
     transactionAdded: "Transacción agregada exitosamente",
     transactionUpdated: "Transacción actualizada exitosamente",
     transactionDeleted: "Transacción eliminada exitosamente",
-    addTransaction: "Agregar Transacción",
-    updateTransaction: "Actualizar Transacción",
-    deleteTransaction: "Eliminar Transacción"
+    welcomeTitle: "¡Bienvenido al Panel de Control Financiero!",
+    welcomeDesc: "Rastrea tus finanzas, establece objetivos y gestiona transacciones en un solo lugar.",
+    welcomeFeature1: "Seguimiento de Ingresos y Gastos",
+    welcomeFeature2: "Establecer Objetivos Financieros",
+    welcomeFeature3: "Analizar tus Gastos",
+    welcomeFeature4: "Análisis Impulsado por IA"
   },
   fr: {
     currentBalance: "Solde Actuel",
@@ -129,14 +133,18 @@ export const translations = {
     tellMeAboutYourDay: "Racontez-moi votre journée",
     processText: "Traiter le Texte",
     recentTransactions: "Transactions Récentes",
-    updateTransaction: "Mettre à jour l'objectif",
-    deleteTransaction: "Supprimer la transaction",
+    addTransaction: "Ajouter une Transaction",
+    updateTransaction: "Mettre à jour la Transaction",
+    deleteTransaction: "Supprimer la Transaction",
     transactionAdded: "Transaction ajoutée avec succès",
     transactionUpdated: "Transaction mise à jour avec succès",
     transactionDeleted: "Transaction supprimée avec succès",
-    addTransaction: "Ajouter une Transaction",
-    updateTransaction: "Mettre à jour la Transaction",
-    deleteTransaction: "Supprimer la Transaction"
+    welcomeTitle: "Bienvenue sur le Tableau de Bord Financier !",
+    welcomeDesc: "Suivez vos finances, fixez des objectifs et gérez vos transactions en un seul endroit.",
+    welcomeFeature1: "Suivi des Revenus et Dépenses",
+    welcomeFeature2: "Définir des Objectifs Financiers",
+    welcomeFeature3: "Analyser vos Dépenses",
+    welcomeFeature4: "Analyses Alimentées par l'IA"
   }
 };
 
