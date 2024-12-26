@@ -5,6 +5,8 @@ import { RecentTransactions } from "@/components/dashboard/RecentTransactions";
 import { GoalTracker } from "@/components/dashboard/GoalTracker";
 import { AIAssistant } from "@/components/dashboard/AIAssistant";
 import { Transaction } from "@/types/props";
+import { useLanguageStore, translations } from "@/stores/languageStore";
+import { LanguageSwitcher } from "@/components/LanguageSwitcher";
 
 const initialTransactions: Transaction[] = [
   {
@@ -32,6 +34,8 @@ const initialTransactions: Transaction[] = [
 
 const Index = () => {
   const [transactions, setTransactions] = useState<Transaction[]>(initialTransactions);
+  const { language } = useLanguageStore();
+  const t = translations[language];
 
   const calculateTotals = () => {
     const income = transactions
@@ -100,12 +104,13 @@ const Index = () => {
   const { income, expenses, balance } = calculateTotals();
 
   return (
-    <div className="min-h-screen bg-gradient-to-br from-blue-50 to-indigo-50 dark:from-gray-900 dark:to-gray-800">
+    <div className="min-h-screen bg-gradient-to-br from-blue-50 to-indigo-50 dark:from-gray-900 dark:to-gray-800" dir={language === 'ar' ? 'rtl' : 'ltr'}>
       <div className="container mx-auto py-8 px-4">
         <div className="flex justify-between items-center mb-8">
           <h1 className="text-4xl font-bold bg-gradient-to-r from-primary to-secondary bg-clip-text text-transparent">
-            Smart Money Dashboard
+            {t.smartMoneyDashboard}
           </h1>
+          <LanguageSwitcher />
         </div>
         <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
           <BalanceCard
