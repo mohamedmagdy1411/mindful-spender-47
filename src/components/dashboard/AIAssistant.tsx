@@ -1,4 +1,4 @@
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { Textarea } from "@/components/ui/textarea";
@@ -18,7 +18,17 @@ interface AIAssistantProps extends BaseProps {
 export const AIAssistant = ({ className, onAddTransaction }: AIAssistantProps) => {
   const [text, setText] = useState("");
   const [isProcessing, setIsProcessing] = useState(false);
-  const [apiKey, setApiKey] = useState("");
+  const [apiKey, setApiKey] = useState(() => {
+    // Try to get the API key from localStorage on component mount
+    return localStorage.getItem('gemini_api_key') || "";
+  });
+
+  // Save API key to localStorage whenever it changes
+  useEffect(() => {
+    if (apiKey) {
+      localStorage.setItem('gemini_api_key', apiKey);
+    }
+  }, [apiKey]);
 
   const processActivity = async (activity: string) => {
     try {
