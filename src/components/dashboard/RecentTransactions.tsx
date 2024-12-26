@@ -47,20 +47,20 @@ export const RecentTransactions = ({
   const handleAdd = (transaction: Omit<Transaction, 'id' | 'date'>) => {
     onAddTransaction?.(transaction);
     setIsAddDialogOpen(false);
-    toast.success(t.addGoal + " " + "تمت إضافة المعاملة بنجاح");
+    toast.success(t.transactionAdded);
   };
 
   const handleUpdate = (transaction: Omit<Transaction, 'id' | 'date'>) => {
     if (editingTransaction) {
       onUpdateTransaction?.(editingTransaction.id, transaction);
       setEditingTransaction(null);
-      toast.success(t.updateGoal + " " + "تم تحديث المعاملة بنجاح");
+      toast.success(t.transactionUpdated);
     }
   };
 
   const handleDelete = (id: string) => {
     onDeleteTransaction?.(id);
-    toast.success(t.updateGoal + " " + "تم حذف المعاملة بنجاح");
+    toast.success(t.transactionDeleted);
   };
 
   return (
@@ -73,7 +73,7 @@ export const RecentTransactions = ({
             className="bg-secondary hover:bg-secondary/90"
           >
             <PlusIcon className="h-4 w-4 mr-2" />
-            {t.addGoal}
+            {t.addTransaction}
           </Button>
         </CardHeader>
         <CardContent>
@@ -125,7 +125,7 @@ export const RecentTransactions = ({
       <Dialog open={isAddDialogOpen} onOpenChange={setIsAddDialogOpen}>
         <DialogContent>
           <DialogHeader>
-            <DialogTitle>{t.addGoal}</DialogTitle>
+            <DialogTitle>{t.addTransaction}</DialogTitle>
           </DialogHeader>
           <TransactionForm
             onSubmit={handleAdd}
@@ -137,7 +137,7 @@ export const RecentTransactions = ({
       <Dialog open={!!editingTransaction} onOpenChange={() => setEditingTransaction(null)}>
         <DialogContent>
           <DialogHeader>
-            <DialogTitle>{t.updateGoal}</DialogTitle>
+            <DialogTitle>{t.updateTransaction}</DialogTitle>
           </DialogHeader>
           {editingTransaction && (
             <TransactionForm

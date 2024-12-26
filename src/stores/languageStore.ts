@@ -35,8 +35,12 @@ export const translations = {
     remaining: "Remaining",
     achieved: "Achieved",
     recentTransactions: "Recent Transactions",
+    addTransaction: "Add Transaction",
     updateTransaction: "Update Transaction",
     deleteTransaction: "Delete Transaction",
+    transactionAdded: "Transaction added successfully",
+    transactionUpdated: "Transaction updated successfully",
+    transactionDeleted: "Transaction deleted successfully"
   },
   ar: {
     currentBalance: "الرصيد الحالي",
@@ -65,8 +69,12 @@ export const translations = {
     remaining: "المتبقي",
     achieved: "تم تحقيق",
     recentTransactions: "المعاملات الأخيرة",
+    addTransaction: "إضافة معاملة",
     updateTransaction: "تحديث المعاملة",
     deleteTransaction: "حذف المعاملة",
+    transactionAdded: "تمت إضافة المعاملة بنجاح",
+    transactionUpdated: "تم تحديث المعاملة بنجاح",
+    transactionDeleted: "تم حذف المعاملة بنجاح"
   },
   es: {
     currentBalance: "Balance Actual",
