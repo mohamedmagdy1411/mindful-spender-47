@@ -3,6 +3,7 @@ import { BalanceCard } from "@/components/dashboard/BalanceCard";
 import { ExpenseChart } from "@/components/dashboard/ExpenseChart";
 import { RecentTransactions } from "@/components/dashboard/RecentTransactions";
 import { GoalTracker } from "@/components/dashboard/GoalTracker";
+import { LanguageSwitcher } from "@/components/LanguageSwitcher";
 
 const initialTransactions = [
   {
@@ -98,24 +99,37 @@ const Index = () => {
   const { income, expenses, balance } = calculateTotals();
 
   return (
-    <div className="container mx-auto py-8 px-4">
-      <h1 className="text-3xl font-bold mb-8 bg-gradient-to-r from-primary to-secondary bg-clip-text text-transparent">
-        Smart Money Dashboard
-      </h1>
-      <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
-        <BalanceCard
-          balance={balance}
-          income={income}
-          expenses={expenses}
-        />
-        <ExpenseChart data={getExpenseData()} />
-        <GoalTracker totalSavings={balance} />
-        <RecentTransactions
-          transactions={transactions}
-          onAddTransaction={handleAddTransaction}
-          onUpdateTransaction={handleUpdateTransaction}
-          onDeleteTransaction={handleDeleteTransaction}
-        />
+    <div className="min-h-screen bg-gradient-to-br from-blue-50 to-indigo-50 dark:from-gray-900 dark:to-gray-800">
+      <div className="container mx-auto py-8 px-4">
+        <div className="flex justify-between items-center mb-8">
+          <h1 className="text-4xl font-bold bg-gradient-to-r from-primary to-secondary bg-clip-text text-transparent">
+            Smart Money Dashboard
+          </h1>
+          <LanguageSwitcher />
+        </div>
+        <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
+          <BalanceCard
+            balance={balance}
+            income={income}
+            expenses={expenses}
+            className="backdrop-blur-sm bg-white/50 dark:bg-gray-800/50 shadow-xl hover:shadow-2xl transition-all duration-300"
+          />
+          <ExpenseChart 
+            data={getExpenseData()} 
+            className="backdrop-blur-sm bg-white/50 dark:bg-gray-800/50 shadow-xl hover:shadow-2xl transition-all duration-300"
+          />
+          <GoalTracker 
+            totalSavings={balance}
+            className="backdrop-blur-sm bg-white/50 dark:bg-gray-800/50 shadow-xl hover:shadow-2xl transition-all duration-300"
+          />
+          <RecentTransactions
+            transactions={transactions}
+            onAddTransaction={handleAddTransaction}
+            onUpdateTransaction={handleUpdateTransaction}
+            onDeleteTransaction={handleDeleteTransaction}
+            className="backdrop-blur-sm bg-white/50 dark:bg-gray-800/50 shadow-xl hover:shadow-2xl transition-all duration-300"
+          />
+        </div>
       </div>
     </div>
   );
