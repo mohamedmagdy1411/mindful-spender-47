@@ -1,13 +1,14 @@
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { ArrowDownIcon, ArrowUpIcon, DollarSign } from "lucide-react";
+import { BaseProps } from "@/types/props";
 
-interface BalanceCardProps {
+interface BalanceCardProps extends BaseProps {
   balance: number;
   income: number;
   expenses: number;
 }
 
-export const BalanceCard = ({ balance, income, expenses }: BalanceCardProps) => {
+export const BalanceCard = ({ balance, income, expenses, className }: BalanceCardProps) => {
   const formatCurrency = (amount: number) => {
     return new Intl.NumberFormat('en-US', {
       style: 'currency',
@@ -16,7 +17,7 @@ export const BalanceCard = ({ balance, income, expenses }: BalanceCardProps) => 
   };
 
   return (
-    <Card className="col-span-3">
+    <Card className={className}>
       <CardHeader>
         <CardTitle className="text-xl font-semibold">Current Balance</CardTitle>
       </CardHeader>

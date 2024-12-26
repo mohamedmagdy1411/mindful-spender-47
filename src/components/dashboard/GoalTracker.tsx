@@ -11,6 +11,7 @@ import {
 } from "@/components/ui/dialog";
 import { Input } from "@/components/ui/input";
 import { toast } from "sonner";
+import { BaseProps } from "@/types/props";
 
 interface Goal {
   id: string;
@@ -19,11 +20,11 @@ interface Goal {
   currentAmount: number;
 }
 
-interface GoalTrackerProps {
+interface GoalTrackerProps extends BaseProps {
   totalSavings: number;
 }
 
-export const GoalTracker = ({ totalSavings }: GoalTrackerProps) => {
+export const GoalTracker = ({ totalSavings, className }: GoalTrackerProps) => {
   const [goals, setGoals] = useState<Goal[]>([
     {
       id: "1",
@@ -59,9 +60,8 @@ export const GoalTracker = ({ totalSavings }: GoalTrackerProps) => {
     setIsAddDialogOpen(false);
     toast.success("Goal added successfully");
   };
-
   return (
-    <Card className="col-span-3">
+    <Card className={className}>
       <CardHeader className="flex flex-row items-center justify-between">
         <CardTitle className="text-xl font-semibold">Financial Goals</CardTitle>
         <Button

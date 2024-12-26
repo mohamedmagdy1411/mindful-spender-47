@@ -1,6 +1,7 @@
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { ResponsiveContainer, PieChart, Pie, Cell, Legend, Tooltip, AreaChart, Area, XAxis, YAxis, CartesianGrid } from "recharts";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
+import { BaseProps } from "@/types/props";
 
 interface ExpenseData {
   name: string;
@@ -14,7 +15,7 @@ interface TrendData {
   income: number;
 }
 
-interface ExpenseChartProps {
+interface ExpenseChartProps extends BaseProps {
   data: ExpenseData[];
 }
 
@@ -27,7 +28,7 @@ const trendData: TrendData[] = [
   { date: 'Jun', expenses: 2700, income: 4900 },
 ];
 
-export const ExpenseChart = ({ data }: ExpenseChartProps) => {
+export const ExpenseChart = ({ data, className }: ExpenseChartProps) => {
   const formatCurrency = (value: number) => {
     return new Intl.NumberFormat('en-US', {
       style: 'currency',
@@ -36,7 +37,7 @@ export const ExpenseChart = ({ data }: ExpenseChartProps) => {
   };
 
   return (
-    <Card className="col-span-3">
+    <Card className={className}>
       <CardHeader>
         <CardTitle className="text-xl font-semibold">Financial Analytics</CardTitle>
       </CardHeader>

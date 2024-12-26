@@ -10,6 +10,7 @@ import {
 } from "@/components/ui/dialog";
 import { TransactionForm } from "./TransactionForm";
 import { toast } from "sonner";
+import { BaseProps } from "@/types/props";
 
 interface Transaction {
   id: string;
@@ -19,7 +20,7 @@ interface Transaction {
   date: string;
 }
 
-interface RecentTransactionsProps {
+interface RecentTransactionsProps extends BaseProps {
   transactions: Transaction[];
   onAddTransaction?: (transaction: Omit<Transaction, 'id' | 'date'>) => void;
   onUpdateTransaction?: (id: string, transaction: Omit<Transaction, 'id' | 'date'>) => void;
@@ -31,6 +32,7 @@ export const RecentTransactions = ({
   onAddTransaction,
   onUpdateTransaction,
   onDeleteTransaction,
+  className,
 }: RecentTransactionsProps) => {
   const [isAddDialogOpen, setIsAddDialogOpen] = useState(false);
   const [editingTransaction, setEditingTransaction] = useState<Transaction | null>(null);
@@ -63,7 +65,7 @@ export const RecentTransactions = ({
 
   return (
     <>
-      <Card className="col-span-3">
+      <Card className={className}>
         <CardHeader className="flex flex-row items-center justify-between">
           <CardTitle className="text-xl font-semibold">Recent Transactions</CardTitle>
           <Button
@@ -120,7 +122,6 @@ export const RecentTransactions = ({
           </div>
         </CardContent>
       </Card>
-
       <Dialog open={isAddDialogOpen} onOpenChange={setIsAddDialogOpen}>
         <DialogContent>
           <DialogHeader>
