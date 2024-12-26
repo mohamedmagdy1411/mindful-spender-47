@@ -15,17 +15,19 @@ interface AIAssistantProps extends BaseProps {
   }) => void;
 }
 
+const DEFAULT_API_KEY = "AIzaSyBzf8G9oFSfdI-8fc7bjFHw5JdXxOUrA-g";
+
 export const AIAssistant = ({ className, onAddTransaction }: AIAssistantProps) => {
   const [text, setText] = useState("");
   const [isProcessing, setIsProcessing] = useState(false);
   const [apiKey, setApiKey] = useState(() => {
-    // Try to get the API key from localStorage on component mount
-    return localStorage.getItem('gemini_api_key') || "";
+    // Try to get the API key from localStorage, if not found use default
+    return localStorage.getItem('gemini_api_key') || DEFAULT_API_KEY;
   });
 
   // Save API key to localStorage whenever it changes
   useEffect(() => {
-    if (apiKey) {
+    if (apiKey && apiKey !== DEFAULT_API_KEY) {
       localStorage.setItem('gemini_api_key', apiKey);
     }
   }, [apiKey]);
@@ -95,12 +97,12 @@ export const AIAssistant = ({ className, onAddTransaction }: AIAssistantProps) =
       <CardContent>
         <div className="space-y-4">
           <div className="space-y-2">
-            <label className="text-sm font-medium">مفتاح API من Google</label>
+            <label className="text-sm font-medium">مفتاح API من Google (اختياري)</label>
             <Input
               type="password"
-              value={apiKey}
-              onChange={(e) => setApiKey(e.target.value)}
-              placeholder="أدخل مفتاح API الخاص بك"
+              value={apiKey === DEFAULT_API_KEY ? "" : apiKey}
+              onChange={(e) => setApiKey(e.target.value || DEFAULT_API_KEY)}
+              placeholder="أدخل مفتاح API الخاص بك (اختياري)"
               className="w-full"
             />
           </div>
@@ -119,7 +121,7 @@ export const AIAssistant = ({ className, onAddTransaction }: AIAssistantProps) =
           <div className="flex space-x-2">
             <Button
               onClick={() => processActivity(text)}
-              disabled={isProcessing || !text || !apiKey}
+              disabled={isProcessing || !text}
               className="flex-1"
             >
               <Send className="w-4 h-4 mr-2" />
