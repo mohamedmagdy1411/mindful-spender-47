@@ -3,7 +3,7 @@ import { BalanceCard } from "@/components/dashboard/BalanceCard";
 import { ExpenseChart } from "@/components/dashboard/ExpenseChart";
 import { RecentTransactions } from "@/components/dashboard/RecentTransactions";
 import { GoalTracker } from "@/components/dashboard/GoalTracker";
-import { LanguageSwitcher } from "@/components/LanguageSwitcher";
+import { AIAssistant } from "@/components/dashboard/AIAssistant";
 import { Transaction } from "@/types/props";
 
 const initialTransactions: Transaction[] = [
@@ -106,7 +106,6 @@ const Index = () => {
           <h1 className="text-4xl font-bold bg-gradient-to-r from-primary to-secondary bg-clip-text text-transparent">
             Smart Money Dashboard
           </h1>
-          <LanguageSwitcher />
         </div>
         <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
           <BalanceCard
@@ -123,12 +122,16 @@ const Index = () => {
             totalSavings={balance}
             className="backdrop-blur-sm bg-white/50 dark:bg-gray-800/50 shadow-xl hover:shadow-2xl transition-all duration-300"
           />
+          <AIAssistant
+            onAddTransaction={handleAddTransaction}
+            className="backdrop-blur-sm bg-white/50 dark:bg-gray-800/50 shadow-xl hover:shadow-2xl transition-all duration-300 md:col-span-3"
+          />
           <RecentTransactions
             transactions={transactions}
             onAddTransaction={handleAddTransaction}
             onUpdateTransaction={handleUpdateTransaction}
             onDeleteTransaction={handleDeleteTransaction}
-            className="backdrop-blur-sm bg-white/50 dark:bg-gray-800/50 shadow-xl hover:shadow-2xl transition-all duration-300"
+            className="backdrop-blur-sm bg-white/50 dark:bg-gray-800/50 shadow-xl hover:shadow-2xl transition-all duration-300 md:col-span-3"
           />
         </div>
       </div>
