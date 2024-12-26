@@ -104,10 +104,10 @@ const Index = () => {
   const { income, expenses, balance } = calculateTotals();
 
   return (
-    <div className="min-h-screen bg-gradient-to-br from-blue-50 to-indigo-50 dark:from-gray-900 dark:to-gray-800" dir={language === 'ar' ? 'rtl' : 'ltr'}>
+    <div className="min-h-screen bg-gradient-to-br from-[#f6d5f7] to-[#fbe9d7] dark:from-gray-900 dark:via-purple-900 dark:to-violet-900" dir={language === 'ar' ? 'rtl' : 'ltr'}>
       <div className="container mx-auto py-8 px-4">
-        <div className="flex justify-between items-center mb-8">
-          <h1 className="text-4xl font-bold bg-gradient-to-r from-primary to-secondary bg-clip-text text-transparent">
+        <div className="flex justify-between items-center mb-8 animate-fade-in">
+          <h1 className="text-4xl font-bold bg-gradient-to-r from-violet-600 to-indigo-600 bg-clip-text text-transparent">
             {t.smartMoneyDashboard}
           </h1>
           <LanguageSwitcher />
@@ -117,26 +117,26 @@ const Index = () => {
             balance={balance}
             income={income}
             expenses={expenses}
-            className="backdrop-blur-sm bg-white/50 dark:bg-gray-800/50 shadow-xl hover:shadow-2xl transition-all duration-300"
+            className="backdrop-blur-sm bg-white/40 dark:bg-gray-800/40 shadow-xl hover:shadow-2xl transition-all duration-300 rounded-xl border border-white/20 hover:scale-105 animate-fade-in"
           />
           <ExpenseChart 
             data={getExpenseData()} 
-            className="backdrop-blur-sm bg-white/50 dark:bg-gray-800/50 shadow-xl hover:shadow-2xl transition-all duration-300"
+            className="backdrop-blur-sm bg-white/40 dark:bg-gray-800/40 shadow-xl hover:shadow-2xl transition-all duration-300 rounded-xl border border-white/20 hover:scale-105 animate-fade-in delay-100"
           />
           <GoalTracker 
             totalSavings={balance}
-            className="backdrop-blur-sm bg-white/50 dark:bg-gray-800/50 shadow-xl hover:shadow-2xl transition-all duration-300"
+            className="backdrop-blur-sm bg-white/40 dark:bg-gray-800/40 shadow-xl hover:shadow-2xl transition-all duration-300 rounded-xl border border-white/20 hover:scale-105 animate-fade-in delay-200"
           />
           <AIAssistant
             onAddTransaction={handleAddTransaction}
-            className="backdrop-blur-sm bg-white/50 dark:bg-gray-800/50 shadow-xl hover:shadow-2xl transition-all duration-300 md:col-span-3"
+            className="backdrop-blur-sm bg-white/40 dark:bg-gray-800/40 shadow-xl hover:shadow-2xl transition-all duration-300 rounded-xl border border-white/20 hover:scale-105 animate-fade-in delay-300 md:col-span-3"
           />
           <RecentTransactions
             transactions={transactions}
             onAddTransaction={handleAddTransaction}
             onUpdateTransaction={handleUpdateTransaction}
             onDeleteTransaction={handleDeleteTransaction}
-            className="backdrop-blur-sm bg-white/50 dark:bg-gray-800/50 shadow-xl hover:shadow-2xl transition-all duration-300 md:col-span-3"
+            className="backdrop-blur-sm bg-white/40 dark:bg-gray-800/40 shadow-xl hover:shadow-2xl transition-all duration-300 rounded-xl border border-white/20 hover:scale-105 animate-fade-in delay-400 md:col-span-3"
           />
         </div>
       </div>
