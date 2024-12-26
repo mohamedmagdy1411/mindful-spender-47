@@ -4,25 +4,26 @@ import { ExpenseChart } from "@/components/dashboard/ExpenseChart";
 import { RecentTransactions } from "@/components/dashboard/RecentTransactions";
 import { GoalTracker } from "@/components/dashboard/GoalTracker";
 import { LanguageSwitcher } from "@/components/LanguageSwitcher";
+import { Transaction } from "@/types/props";
 
-const initialTransactions = [
+const initialTransactions: Transaction[] = [
   {
     id: "1",
-    type: "expense" as const,
+    type: "expense",
     amount: 120,
     category: "Groceries",
     date: "2024-03-10",
   },
   {
     id: "2",
-    type: "income" as const,
+    type: "income",
     amount: 2500,
     category: "Salary",
     date: "2024-03-09",
   },
   {
     id: "3",
-    type: "expense" as const,
+    type: "expense",
     amount: 50,
     category: "Transport",
     date: "2024-03-08",
@@ -30,7 +31,7 @@ const initialTransactions = [
 ];
 
 const Index = () => {
-  const [transactions, setTransactions] = useState(initialTransactions);
+  const [transactions, setTransactions] = useState<Transaction[]>(initialTransactions);
 
   const calculateTotals = () => {
     const income = transactions
@@ -68,7 +69,7 @@ const Index = () => {
     }));
   };
 
-  const handleAddTransaction = (newTransaction: Omit<typeof transactions[0], "id" | "date">) => {
+  const handleAddTransaction = (newTransaction: Omit<Transaction, "id" | "date">) => {
     setTransactions((prev) => [
       {
         ...newTransaction,
@@ -81,7 +82,7 @@ const Index = () => {
 
   const handleUpdateTransaction = (
     id: string,
-    updatedTransaction: Omit<typeof transactions[0], "id" | "date">
+    updatedTransaction: Omit<Transaction, "id" | "date">
   ) => {
     setTransactions((prev) =>
       prev.map((t) =>
