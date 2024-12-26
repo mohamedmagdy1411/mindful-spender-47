@@ -2,129 +2,110 @@ import { useState } from "react";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { Textarea } from "@/components/ui/textarea";
-import { Bot, Send, Trash, Plus, Edit } from "lucide-react";
-import { useLanguageStore, translations } from "@/stores/languageStore";
+import { Send } from "lucide-react";
 import { toast } from "sonner";
+import { BaseProps } from "@/types/props";
 
-interface AIAssistantProps {
+interface AIAssistantProps extends BaseProps {
   onAddTransaction: (transaction: {
     type: 'income' | 'expense';
     amount: number;
     category: string;
   }) => void;
-  className?: string;
 }
 
-export const AIAssistant = ({ onAddTransaction, className }: AIAssistantProps) => {
-  const [input, setInput] = useState("");
+const DEFAULT_API_KEY = "AIzaSyBzf8G9oFSfdI-8fc7bjFHw5JdXxOUrA-g";
+
+export const AIAssistant = ({ className, onAddTransaction }: AIAssistantProps) => {
+  const [text, setText] = useState("");
   const [isProcessing, setIsProcessing] = useState(false);
-  const { language } = useLanguageStore();
-  const t = translations[language];
+  const [apiKey] = useState(DEFAULT_API_KEY);
 
-  const processUserInput = async () => {
-    if (!input.trim()) {
-      toast.error("الرجاء إدخال نص");
-      return;
-    }
-
-    setIsProcessing(true);
+  const processActivity = async (activity: string) => {
     try {
-      const words = input.toLowerCase().split(' ');
-      const amount = words.find(word => !isNaN(Number(word)));
-      const isExpense = words.some(word => 
-        ['صرفت', 'دفعت', 'اشتريت', 'spent', 'paid', 'bought'].includes(word)
-      );
-      const isIncome = words.some(word => 
-        ['استلمت', 'ربحت', 'received', 'earned', 'got'].includes(word)
-      );
+      setIsProcessing(true);
       
-      if (amount) {
-        const transaction = {
-          type: isExpense ? 'expense' : (isIncome ? 'income' : 'expense'),
-          amount: Number(amount),
-          category: detectCategory(words),
-        };
-        
-        onAddTransaction(transaction);
-        toast.success("تم إضافة المعاملة بنجاح");
-        setInput("");
+      const response = await fetch('https://generativelanguage.googleapis.com/v1beta/models/gemini-pro:generateContent', {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+          'x-goog-api-key': apiKey,
+        },
+        body: JSON.stringify({
+          contents: [{
+            parts: [{
+              text: `You are a financial assistant that helps users track their expenses and income. 
+              Extract financial transactions from this activity and respond in JSON format with an array of transactions.
+              Each transaction should contain:
+              - type: "income" or "expense"
+              - amount: number (in USD)
+              - category: string
+              
+              Activity: ${activity}
+              
+              Example response format: {"transactions": [{"type": "expense", "amount": 25, "category": "Food"}]}`
+            }]
+          }],
+          generationConfig: {
+            temperature: 0.2,
+            topK: 1,
+            topP: 0.8,
+          },
+        }),
+      });
+
+      if (!response.ok) {
+        throw new Error('Failed to process activity');
+      }
+
+      const data = await response.json();
+      const aiResponse = JSON.parse(data.candidates[0].content.parts[0].text);
+      
+      if (aiResponse.transactions && aiResponse.transactions.length > 0) {
+        aiResponse.transactions.forEach((transaction: any) => {
+          onAddTransaction(transaction);
+        });
+        toast.success("تم إضافة المعاملات بنجاح!");
       } else {
-        const suggestion = analyzeText(input);
-        toast.info(suggestion);
+        toast.info("لم يتم العثور على معاملات مالية في النشاط");
       }
     } catch (error) {
-      toast.error("حدث خطأ في معالجة النص");
+      console.error('Error processing activity:', error);
+      toast.error("فشل في معالجة النشاط. يرجى المحاولة مرة أخرى.");
     } finally {
       setIsProcessing(false);
+      setText("");
     }
-  };
-
-  const detectCategory = (words: string[]): string => {
-    const categories = {
-      طعام: ['طعام', 'مطعم', 'غداء', 'food', 'restaurant', 'lunch'],
-      مواصلات: ['سيارة', 'بنزين', 'تاكسي', 'car', 'gas', 'taxi'],
-      تسوق: ['ملابس', 'تسوق', 'clothes', 'shopping'],
-      راتب: ['راتب', 'salary', 'wage'],
-      استثمار: ['استثمار', 'أسهم', 'investment', 'stocks']
-    };
-
-    for (const [category, keywords] of Object.entries(categories)) {
-      if (words.some(word => keywords.includes(word))) {
-        return category;
-      }
-    }
-    return 'أخرى';
-  };
-
-  const analyzeText = (text: string): string => {
-    const lowerText = text.toLowerCase();
-    
-    if (lowerText.includes('كم') || lowerText.includes('how much')) {
-      return "يمكنني مساعدتك في تتبع مصروفاتك. هل تريد إضافة معاملة جديدة؟";
-    }
-    
-    if (lowerText.includes('نصيحة') || lowerText.includes('advice')) {
-      return "حاول تخصيص 50% للضروريات، 30% للرغبات، و20% للادخار";
-    }
-    
-    if (lowerText.includes('توفير') || lowerText.includes('save')) {
-      return "جرب تحدي 52 أسبوع للتوفير - ابدأ بمبلغ صغير وزد المبلغ كل أسبوع";
-    }
-    
-    return "يمكنني مساعدتك في إدارة أموالك. جرب إخباري عن معاملاتك اليومية";
   };
 
   return (
     <Card className={className}>
       <CardHeader>
-        <CardTitle className="flex items-center gap-2">
-          <Bot className="w-6 h-6" />
-          <span>{t.tellMeAboutYourDay}</span>
-        </CardTitle>
+        <CardTitle className="text-xl font-semibold">المساعد المالي الذكي</CardTitle>
       </CardHeader>
       <CardContent>
-        <div className="flex flex-col gap-4">
-          <Textarea
-            value={input}
-            onChange={(e) => setInput(e.target.value)}
-            placeholder="مثال: صرفت 50 على الغداء اليوم"
-            className="min-h-[100px] resize-none"
-            dir={language === 'ar' ? 'rtl' : 'ltr'}
-          />
-          <Button
-            onClick={processUserInput}
-            disabled={isProcessing}
-            className="w-full flex items-center justify-center gap-2"
-          >
-            {isProcessing ? (
-              <div className="animate-spin rounded-full h-4 w-4 border-2 border-white border-t-transparent" />
-            ) : (
-              <>
-                <Send className="w-4 h-4" />
-                <span>{t.processText}</span>
-              </>
-            )}
-          </Button>
+        <div className="space-y-4">
+          <div className="space-y-2">
+            <label className="text-sm font-medium">أخبرني عن يومك</label>
+            <Textarea
+              value={text}
+              onChange={(e) => setText(e.target.value)}
+              placeholder="مثال: ذهبت إلى السوبر ماركت وأنفقت 50 دولارًا على البقالة، ثم استلمت راتبي 3000 دولار"
+              className="min-h-[100px] text-right"
+              dir="rtl"
+            />
+          </div>
+
+          <div className="flex space-x-2">
+            <Button
+              onClick={() => processActivity(text)}
+              disabled={isProcessing || !text}
+              className="flex-1"
+            >
+              <Send className="w-4 h-4 mr-2" />
+              معالجة النص
+            </Button>
+          </div>
         </div>
       </CardContent>
     </Card>

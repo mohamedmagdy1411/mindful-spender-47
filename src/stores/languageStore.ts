@@ -40,13 +40,7 @@ export const translations = {
     deleteTransaction: "Delete Transaction",
     transactionAdded: "Transaction added successfully",
     transactionUpdated: "Transaction updated successfully",
-    transactionDeleted: "Transaction deleted successfully",
-    welcomeTitle: "Welcome to Smart Money Dashboard!",
-    welcomeDesc: "Track your finances, set goals, and manage transactions all in one place.",
-    welcomeFeature1: "Track Income & Expenses",
-    welcomeFeature2: "Set Financial Goals",
-    welcomeFeature3: "Analyze Your Spending",
-    welcomeFeature4: "AI-Powered Insights"
+    transactionDeleted: "Transaction deleted successfully"
   },
   ar: {
     currentBalance: "الرصيد الحالي",
@@ -80,13 +74,7 @@ export const translations = {
     deleteTransaction: "حذف المعاملة",
     transactionAdded: "تمت إضافة المعاملة بنجاح",
     transactionUpdated: "تم تحديث المعاملة بنجاح",
-    transactionDeleted: "تم حذف المعاملة بنجاح",
-    welcomeTitle: "مرحباً بك في لوحة تحكم الأموال الذكية!",
-    welcomeDesc: "تتبع أموالك، حدد أهدافك، وأدر معاملاتك في مكان واحد.",
-    welcomeFeature1: "تتبع الدخل والمصروفات",
-    welcomeFeature2: "حدد أهدافك المالية",
-    welcomeFeature3: "حلل مصروفاتك",
-    welcomeFeature4: "تحليلات مدعومة بالذكاء الاصطناعي"
+    transactionDeleted: "تم حذف المعاملة بنجاح"
   },
   es: {
     currentBalance: "Balance Actual",
@@ -104,18 +92,8 @@ export const translations = {
     tellMeAboutYourDay: "Cuéntame sobre tu día",
     processText: "Procesar Texto",
     recentTransactions: "Transacciones Recientes",
-    addTransaction: "Agregar Transacción",
     updateTransaction: "Actualizar Transacción",
     deleteTransaction: "Eliminar Transacción",
-    transactionAdded: "Transacción agregada exitosamente",
-    transactionUpdated: "Transacción actualizada exitosamente",
-    transactionDeleted: "Transacción eliminada exitosamente",
-    welcomeTitle: "¡Bienvenido al Panel de Control Financiero!",
-    welcomeDesc: "Rastrea tus finanzas, establece objetivos y gestiona transacciones en un solo lugar.",
-    welcomeFeature1: "Seguimiento de Ingresos y Gastos",
-    welcomeFeature2: "Establecer Objetivos Financieros",
-    welcomeFeature3: "Analizar tus Gastos",
-    welcomeFeature4: "Análisis Impulsado por IA"
   },
   fr: {
     currentBalance: "Solde Actuel",
@@ -133,18 +111,8 @@ export const translations = {
     tellMeAboutYourDay: "Racontez-moi votre journée",
     processText: "Traiter le Texte",
     recentTransactions: "Transactions Récentes",
-    addTransaction: "Ajouter une Transaction",
-    updateTransaction: "Mettre à jour la Transaction",
-    deleteTransaction: "Supprimer la Transaction",
-    transactionAdded: "Transaction ajoutée avec succès",
-    transactionUpdated: "Transaction mise à jour avec succès",
-    transactionDeleted: "Transaction supprimée avec succès",
-    welcomeTitle: "Bienvenue sur le Tableau de Bord Financier !",
-    welcomeDesc: "Suivez vos finances, fixez des objectifs et gérez vos transactions en un seul endroit.",
-    welcomeFeature1: "Suivi des Revenus et Dépenses",
-    welcomeFeature2: "Définir des Objectifs Financiers",
-    welcomeFeature3: "Analyser vos Dépenses",
-    welcomeFeature4: "Analyses Alimentées par l'IA"
+    updateTransaction: "Mettre à jour l'objectif",
+    deleteTransaction: "Supprimer la transaction",
   }
 };
 
