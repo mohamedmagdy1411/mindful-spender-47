@@ -2,6 +2,7 @@ import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { ResponsiveContainer, PieChart, Pie, Cell, Legend, Tooltip, AreaChart, Area, XAxis, YAxis, CartesianGrid } from "recharts";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { BaseProps } from "@/types/props";
+import { useLanguageStore, translations, formatNumber } from "@/stores/languageStore";
 
 interface ExpenseData {
   name: string;
@@ -29,23 +30,23 @@ const trendData: TrendData[] = [
 ];
 
 export const ExpenseChart = ({ data, className }: ExpenseChartProps) => {
+  const { language } = useLanguageStore();
+  const t = translations[language];
+
   const formatCurrency = (value: number) => {
-    return new Intl.NumberFormat('en-US', {
-      style: 'currency',
-      currency: 'USD',
-    }).format(value);
+    return formatNumber(value, language);
   };
 
   return (
     <Card className={className}>
       <CardHeader>
-        <CardTitle className="text-xl font-semibold">Financial Analytics</CardTitle>
+        <CardTitle className="text-xl font-semibold">{t.financialAnalytics}</CardTitle>
       </CardHeader>
       <CardContent>
         <Tabs defaultValue="breakdown" className="space-y-4">
           <TabsList className="grid w-full grid-cols-2">
-            <TabsTrigger value="breakdown">Expense Breakdown</TabsTrigger>
-            <TabsTrigger value="trends">Income vs Expenses</TabsTrigger>
+            <TabsTrigger value="breakdown">{t.expenseBreakdown}</TabsTrigger>
+            <TabsTrigger value="trends">{t.incomeVsExpenses}</TabsTrigger>
           </TabsList>
           
           <TabsContent value="breakdown" className="h-[300px]">

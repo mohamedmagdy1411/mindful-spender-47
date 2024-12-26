@@ -11,6 +11,7 @@ import {
 import { TransactionForm } from "./TransactionForm";
 import { toast } from "sonner";
 import { BaseProps } from "@/types/props";
+import { useLanguageStore, translations, formatNumber } from "@/stores/languageStore";
 
 interface Transaction {
   id: string;
@@ -34,46 +35,45 @@ export const RecentTransactions = ({
   onDeleteTransaction,
   className,
 }: RecentTransactionsProps) => {
+  const { language } = useLanguageStore();
+  const t = translations[language];
   const [isAddDialogOpen, setIsAddDialogOpen] = useState(false);
   const [editingTransaction, setEditingTransaction] = useState<Transaction | null>(null);
 
   const formatCurrency = (amount: number) => {
-    return new Intl.NumberFormat('en-US', {
-      style: 'currency',
-      currency: 'USD',
-    }).format(amount);
+    return formatNumber(amount, language);
   };
 
   const handleAdd = (transaction: Omit<Transaction, 'id' | 'date'>) => {
     onAddTransaction?.(transaction);
     setIsAddDialogOpen(false);
-    toast.success("Transaction added successfully");
+    toast.success(t.addGoal + " " + "تمت إضافة المعاملة بنجاح");
   };
 
   const handleUpdate = (transaction: Omit<Transaction, 'id' | 'date'>) => {
     if (editingTransaction) {
       onUpdateTransaction?.(editingTransaction.id, transaction);
       setEditingTransaction(null);
-      toast.success("Transaction updated successfully");
+      toast.success(t.updateGoal + " " + "تم تحديث المعاملة بنجاح");
     }
   };
 
   const handleDelete = (id: string) => {
     onDeleteTransaction?.(id);
-    toast.success("Transaction deleted successfully");
+    toast.success(t.updateGoal + " " + "تم حذف المعاملة بنجاح");
   };
 
   return (
     <>
       <Card className={className}>
         <CardHeader className="flex flex-row items-center justify-between">
-          <CardTitle className="text-xl font-semibold">Recent Transactions</CardTitle>
+          <CardTitle className="text-xl font-semibold">{t.recentTransactions}</CardTitle>
           <Button
             onClick={() => setIsAddDialogOpen(true)}
             className="bg-secondary hover:bg-secondary/90"
           >
             <PlusIcon className="h-4 w-4 mr-2" />
-            Add Transaction
+            {t.addGoal}
           </Button>
         </CardHeader>
         <CardContent>
@@ -125,7 +125,7 @@ export const RecentTransactions = ({
       <Dialog open={isAddDialogOpen} onOpenChange={setIsAddDialogOpen}>
         <DialogContent>
           <DialogHeader>
-            <DialogTitle>Add Transaction</DialogTitle>
+            <DialogTitle>{t.addGoal}</DialogTitle>
           </DialogHeader>
           <TransactionForm
             onSubmit={handleAdd}
@@ -137,7 +137,7 @@ export const RecentTransactions = ({
       <Dialog open={!!editingTransaction} onOpenChange={() => setEditingTransaction(null)}>
         <DialogContent>
           <DialogHeader>
-            <DialogTitle>Edit Transaction</DialogTitle>
+            <DialogTitle>{t.updateGoal}</DialogTitle>
           </DialogHeader>
           {editingTransaction && (
             <TransactionForm

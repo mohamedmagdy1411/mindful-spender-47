@@ -1,6 +1,6 @@
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Progress } from "@/components/ui/progress";
-import { PlusIcon, PencilIcon, TrashIcon, CheckCircleIcon } from "lucide-react";
+import { PlusIcon, PencilIcon, TrashIcon } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { useState } from "react";
 import {
@@ -20,7 +20,7 @@ import {
 } from "@/components/ui/select";
 import { toast } from "sonner";
 import { BaseProps } from "@/types/props";
-import { useLanguageStore, translations } from "@/stores/languageStore";
+import { useLanguageStore, translations, formatNumber } from "@/stores/languageStore";
 
 interface Goal {
   id: string;
@@ -114,12 +114,6 @@ export const GoalTracker = ({ totalSavings, className }: GoalTrackerProps) => {
     return Math.min((currentAmount / targetAmount) * 100, 100);
   };
 
-  const getProgressColor = (progress: number) => {
-    if (progress >= 90) return "bg-green-500";
-    if (progress >= 50) return "bg-blue-500";
-    return "bg-primary";
-  };
-
   return (
     <Card className={className}>
       <CardHeader className="flex flex-row items-center justify-between">
@@ -169,7 +163,7 @@ export const GoalTracker = ({ totalSavings, className }: GoalTrackerProps) => {
                 </div>
                 <div className="flex justify-between items-center text-sm">
                   <span className="text-muted-foreground">
-                    ${goal.currentAmount.toLocaleString()} / ${goal.targetAmount.toLocaleString()}
+                    {formatNumber(goal.currentAmount, language)} / {formatNumber(goal.targetAmount, language)}
                   </span>
                   <span className="font-medium">{Math.round(progress)}%</span>
                 </div>

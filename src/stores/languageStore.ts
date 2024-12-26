@@ -23,6 +23,17 @@ export const translations = {
     smartMoneyDashboard: "Smart Money Dashboard",
     tellMeAboutYourDay: "Tell me about your day",
     processText: "Process Text",
+    targetDate: "Target Date",
+    description: "Description",
+    category: "Category",
+    savings: "Savings",
+    investment: "Investment",
+    debt: "Debt",
+    leisure: "Leisure",
+    optional: "Optional",
+    updateGoal: "Update Goal",
+    remaining: "Remaining",
+    achieved: "Achieved",
   },
   ar: {
     currentBalance: "الرصيد الحالي",
@@ -39,6 +50,17 @@ export const translations = {
     smartMoneyDashboard: "لوحة تحكم الأموال الذكية",
     tellMeAboutYourDay: "أخبرني عن يومك",
     processText: "معالجة النص",
+    targetDate: "تاريخ الهدف",
+    description: "الوصف",
+    category: "الفئة",
+    savings: "مدخرات",
+    investment: "استثمار",
+    debt: "ديون",
+    leisure: "ترفيه",
+    optional: "اختياري",
+    updateGoal: "تحديث الهدف",
+    remaining: "المتبقي",
+    achieved: "تم تحقيق",
   },
   es: {
     currentBalance: "Balance Actual",
@@ -72,6 +94,15 @@ export const translations = {
     tellMeAboutYourDay: "Racontez-moi votre journée",
     processText: "Traiter le Texte",
   }
+};
+
+export const formatNumber = (number: number, language: Language) => {
+  const formatter = new Intl.NumberFormat(language === 'ar' ? 'ar-SA' : 'en-US', {
+    style: 'currency',
+    currency: 'USD',
+  });
+  
+  return formatter.format(number);
 };
 
 export const useLanguageStore = create<LanguageStore>((set) => ({
