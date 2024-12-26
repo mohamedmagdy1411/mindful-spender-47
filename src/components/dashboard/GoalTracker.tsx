@@ -1,6 +1,6 @@
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Progress } from "@/components/ui/progress";
-import { PlusIcon, Pencil2Icon, TrashIcon, CheckCircleIcon } from "lucide-react";
+import { PlusIcon, PencilIcon, TrashIcon, CheckCircleIcon } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { useState } from "react";
 import {
@@ -156,7 +156,7 @@ export const GoalTracker = ({ totalSavings, className }: GoalTrackerProps) => {
                       size="icon"
                       onClick={() => setEditingGoal(goal)}
                     >
-                      <Pencil2Icon className="h-4 w-4" />
+                      <PencilIcon className="h-4 w-4" />
                     </Button>
                     <Button
                       variant="ghost"
@@ -175,8 +175,7 @@ export const GoalTracker = ({ totalSavings, className }: GoalTrackerProps) => {
                 </div>
                 <Progress
                   value={progress}
-                  className="h-2"
-                  indicatorClassName={getProgressColor(progress)}
+                  className={`h-2 ${getProgressColor(progress)}`}
                 />
                 {goal.targetDate && (
                   <div className="text-sm text-muted-foreground mt-2">
