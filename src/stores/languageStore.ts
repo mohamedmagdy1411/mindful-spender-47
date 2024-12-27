@@ -40,7 +40,12 @@ export const translations = {
     deleteTransaction: "Delete Transaction",
     transactionAdded: "Transaction added successfully",
     transactionUpdated: "Transaction updated successfully",
-    transactionDeleted: "Transaction deleted successfully"
+    transactionDeleted: "Transaction deleted successfully",
+    dashboard: "Dashboard",
+    reports: "Reports",
+    menu: "Menu",
+    categories: "Categories",
+    addCategory: "Add Category"
   },
   ar: {
     currentBalance: "الرصيد الحالي",
@@ -74,7 +79,12 @@ export const translations = {
     deleteTransaction: "حذف المعاملة",
     transactionAdded: "تمت إضافة المعاملة بنجاح",
     transactionUpdated: "تم تحديث المعاملة بنجاح",
-    transactionDeleted: "تم حذف المعاملة بنجاح"
+    transactionDeleted: "تم حذف المعاملة بنجاح",
+    dashboard: "لوحة التحكم",
+    reports: "التقارير",
+    menu: "القائمة",
+    categories: "الفئات",
+    addCategory: "إضافة فئة"
   },
   es: {
     currentBalance: "Balance Actual",
