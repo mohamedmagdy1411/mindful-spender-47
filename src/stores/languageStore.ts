@@ -32,7 +32,12 @@ export const translations = {
     hello: "Hello",
     today: "Today",
     learningPlan: "Learning Plan",
-    recentTransactions: "Recent Transactions"
+    recentTransactions: "Recent Transactions",
+    addTransaction: "Add Transaction",
+    updateTransaction: "Update Transaction",
+    transactionAdded: "Transaction added successfully",
+    transactionUpdated: "Transaction updated successfully",
+    transactionDeleted: "Transaction deleted successfully"
   },
   ar: {
     currentBalance: "الرصيد الحالي",
@@ -58,9 +63,21 @@ export const translations = {
     hello: "مرحباً",
     today: "اليوم",
     learningPlan: "خطة التعلم",
-    recentTransactions: "المعاملات الأخيرة"
+    recentTransactions: "المعاملات الأخيرة",
+    addTransaction: "إضافة معاملة",
+    updateTransaction: "تحديث المعاملة",
+    transactionAdded: "تمت إضافة المعاملة بنجاح",
+    transactionUpdated: "تم تحديث المعاملة بنجاح",
+    transactionDeleted: "تم حذف المعاملة بنجاح"
   }
 }
+
+export const formatNumber = (number: number, language: Language) => {
+  return new Intl.NumberFormat(language === 'ar' ? 'ar-SA' : 'en-US', {
+    style: 'currency',
+    currency: language === 'ar' ? 'SAR' : 'USD',
+  }).format(number);
+};
 
 export const useLanguageStore = create<LanguageState>((set) => ({
   language: "ar",
