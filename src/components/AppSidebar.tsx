@@ -53,13 +53,13 @@ export function AppSidebar() {
   ]
 
   return (
-    <Sidebar className="bg-white/40 backdrop-blur-sm border-r border-white/20">
+    <Sidebar className="bg-[#2A2F3F]/90 backdrop-blur-lg border-r border-gray-800">
       <SidebarContent>
         <div className="flex items-center justify-between p-2">
-          <SidebarTrigger className="hover:bg-white/20" />
+          <SidebarTrigger className="hover:bg-gray-800/50 rounded-lg transition-colors duration-200" />
         </div>
         <SidebarGroup>
-          <SidebarGroupLabel className="text-gray-600">{t.menu}</SidebarGroupLabel>
+          <SidebarGroupLabel className="text-gray-400">{t.menu}</SidebarGroupLabel>
           <SidebarGroupContent>
             <SidebarMenu>
               {items.map((item) => (
@@ -67,7 +67,7 @@ export function AppSidebar() {
                   <SidebarMenuButton
                     onClick={() => navigate(item.url)}
                     tooltip={item.title}
-                    className="hover:bg-white/20 transition-colors duration-200"
+                    className="hover:bg-gray-800/50 rounded-lg transition-colors duration-200"
                   >
                     <item.icon className="w-4 h-4" />
                     <span>{item.title}</span>
@@ -78,18 +78,18 @@ export function AppSidebar() {
           </SidebarGroupContent>
         </SidebarGroup>
         <SidebarGroup>
-          <SidebarGroupLabel className="text-gray-600">{t.categories}</SidebarGroupLabel>
+          <SidebarGroupLabel className="text-gray-400">{t.categories}</SidebarGroupLabel>
           <SidebarGroupContent>
             <SidebarMenu>
               {defaultCategories.map((category) => (
                 <SidebarMenuItem key={category}>
-                  <SidebarMenuButton className="hover:bg-white/20 transition-colors duration-200">
+                  <SidebarMenuButton className="hover:bg-gray-800/50 rounded-lg transition-colors duration-200">
                     <span>{category}</span>
                   </SidebarMenuButton>
                 </SidebarMenuItem>
               ))}
               <SidebarMenuItem>
-                <SidebarMenuButton className="hover:bg-white/20 transition-colors duration-200">
+                <SidebarMenuButton className="hover:bg-gray-800/50 rounded-lg transition-colors duration-200">
                   <Plus className="w-4 h-4" />
                   <span>{t.addCategory}</span>
                 </SidebarMenuButton>

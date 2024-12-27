@@ -1,10 +1,10 @@
-import { create } from 'zustand';
+import { create } from "zustand";
 
-type Language = 'en' | 'es' | 'fr' | 'ar';
+type Language = "en" | "ar" | "es" | "fr";
 
-interface LanguageStore {
+interface LanguageState {
   language: Language;
-  setLanguage: (lang: Language) => void;
+  setLanguage: (language: Language) => void;
 }
 
 export const translations = {
@@ -20,21 +20,8 @@ export const translations = {
     addNewGoal: "Add New Goal",
     goalName: "Goal Name",
     targetAmount: "Target Amount",
-    smartMoneyDashboard: "Smart Money Dashboard",
-    tellMeAboutYourDay: "Tell me about your day",
-    processText: "Process Text",
-    targetDate: "Target Date",
-    description: "Description",
-    category: "Category",
-    savings: "Savings",
-    investment: "Investment",
-    debt: "Debt",
-    leisure: "Leisure",
-    optional: "Optional",
-    updateGoal: "Update Goal",
-    remaining: "Remaining",
-    achieved: "Achieved",
-    recentTransactions: "Recent Transactions",
+    currentAmount: "Current Amount",
+    deadline: "Deadline",
     addTransaction: "Add Transaction",
     updateTransaction: "Update Transaction",
     deleteTransaction: "Delete Transaction",
@@ -45,7 +32,10 @@ export const translations = {
     reports: "Reports",
     menu: "Menu",
     categories: "Categories",
-    addCategory: "Add Category"
+    addCategory: "Add Category",
+    hello: "Hello",
+    today: "Today",
+    learningPlan: "Learning Plan"
   },
   ar: {
     currentBalance: "الرصيد الحالي",
@@ -59,21 +49,8 @@ export const translations = {
     addNewGoal: "إضافة هدف جديد",
     goalName: "اسم الهدف",
     targetAmount: "المبلغ المستهدف",
-    smartMoneyDashboard: "لوحة تحكم الأموال الذكية",
-    tellMeAboutYourDay: "أخبرني عن يومك",
-    processText: "معالجة النص",
-    targetDate: "تاريخ الهدف",
-    description: "الوصف",
-    category: "الفئة",
-    savings: "مدخرات",
-    investment: "استثمار",
-    debt: "ديون",
-    leisure: "ترفيه",
-    optional: "اختياري",
-    updateGoal: "تحديث الهدف",
-    remaining: "المتبقي",
-    achieved: "تم تحقيق",
-    recentTransactions: "المعاملات الأخيرة",
+    currentAmount: "المبلغ الحالي",
+    deadline: "الموعد النهائي",
     addTransaction: "إضافة معاملة",
     updateTransaction: "تحديث المعاملة",
     deleteTransaction: "حذف المعاملة",
@@ -84,32 +61,45 @@ export const translations = {
     reports: "التقارير",
     menu: "القائمة",
     categories: "الفئات",
-    addCategory: "إضافة فئة"
+    addCategory: "إضافة فئة",
+    hello: "مرحباً",
+    today: "اليوم",
+    learningPlan: "خطة التعلم"
   },
   es: {
-    currentBalance: "Balance Actual",
+    currentBalance: "Saldo Actual",
     income: "Ingresos",
     expenses: "Gastos",
     financialAnalytics: "Análisis Financiero",
     expenseBreakdown: "Desglose de Gastos",
     incomeVsExpenses: "Ingresos vs Gastos",
-    financialGoals: "Objetivos Financieros",
-    addGoal: "Añadir Objetivo",
-    addNewGoal: "Añadir Nuevo Objetivo",
-    goalName: "Nombre del Objetivo",
-    targetAmount: "Cantidad Objetivo",
-    smartMoneyDashboard: "Panel de Control Financiero",
-    tellMeAboutYourDay: "Cuéntame sobre tu día",
-    processText: "Procesar Texto",
-    recentTransactions: "Transacciones Recientes",
+    financialGoals: "Metas Financieras",
+    addGoal: "Agregar Meta",
+    addNewGoal: "Agregar Nueva Meta",
+    goalName: "Nombre de la Meta",
+    targetAmount: "Monto Objetivo",
+    currentAmount: "Monto Actual",
+    deadline: "Fecha Límite",
+    addTransaction: "Agregar Transacción",
     updateTransaction: "Actualizar Transacción",
     deleteTransaction: "Eliminar Transacción",
+    transactionAdded: "Transacción agregada con éxito",
+    transactionUpdated: "Transacción actualizada con éxito",
+    transactionDeleted: "Transacción eliminada con éxito",
+    dashboard: "Tablero",
+    reports: "Informes",
+    menu: "Menú",
+    categories: "Categorías",
+    addCategory: "Agregar Categoría",
+    hello: "Hola",
+    today: "Hoy",
+    learningPlan: "Plan de Aprendizaje"
   },
   fr: {
     currentBalance: "Solde Actuel",
-    income: "Revenus",
+    income: "Revenu",
     expenses: "Dépenses",
-    financialAnalytics: "Analyses Financières",
+    financialAnalytics: "Analyse Financière",
     expenseBreakdown: "Répartition des Dépenses",
     incomeVsExpenses: "Revenus vs Dépenses",
     financialGoals: "Objectifs Financiers",
@@ -117,25 +107,33 @@ export const translations = {
     addNewGoal: "Ajouter un Nouvel Objectif",
     goalName: "Nom de l'Objectif",
     targetAmount: "Montant Cible",
-    smartMoneyDashboard: "Tableau de Bord Financier",
-    tellMeAboutYourDay: "Racontez-moi votre journée",
-    processText: "Traiter le Texte",
-    recentTransactions: "Transactions Récentes",
-    updateTransaction: "Mettre à jour l'objectif",
-    deleteTransaction: "Supprimer la transaction",
+    currentAmount: "Montant Actuel",
+    deadline: "Date Limite",
+    addTransaction: "Ajouter une Transaction",
+    updateTransaction: "Mettre à Jour la Transaction",
+    deleteTransaction: "Supprimer la Transaction",
+    transactionAdded: "Transaction ajoutée avec succès",
+    transactionUpdated: "Transaction mise à jour avec succès",
+    transactionDeleted: "Transaction supprimée avec succès",
+    dashboard: "Tableau de Bord",
+    reports: "Rapports",
+    menu: "Menu",
+    categories: "Catégories",
+    addCategory: "Ajouter une Catégorie",
+    hello: "Bonjour",
+    today: "Aujourd'hui",
+    learningPlan: "Plan d'Apprentissage"
   }
 };
 
-export const formatNumber = (number: number, language: Language) => {
-  const formatter = new Intl.NumberFormat(language === 'ar' ? 'ar-SA' : 'en-US', {
-    style: 'currency',
-    currency: 'USD',
-  });
-  
-  return formatter.format(number);
-};
-
-export const useLanguageStore = create<LanguageStore>((set) => ({
-  language: 'ar',
-  setLanguage: (lang) => set({ language: lang }),
+export const useLanguageStore = create<LanguageState>((set) => ({
+  language: "en",
+  setLanguage: (language) => set({ language }),
 }));
+
+export const formatNumber = (number: number, language: string) => {
+  return new Intl.NumberFormat(language === "ar" ? "ar-SA" : "en-US", {
+    style: "currency",
+    currency: "USD",
+  }).format(number);
+};
