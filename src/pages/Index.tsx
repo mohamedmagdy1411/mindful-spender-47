@@ -7,8 +7,6 @@ import { AIAssistant } from "@/components/dashboard/AIAssistant";
 import { Transaction } from "@/types/props";
 import { useLanguageStore, translations } from "@/stores/languageStore";
 import { LanguageSwitcher } from "@/components/LanguageSwitcher";
-import { Avatar } from "@/components/ui/avatar";
-import { Bell } from "lucide-react";
 
 const initialTransactions: Transaction[] = [
   {
@@ -58,14 +56,14 @@ const Index = () => {
       }, {} as Record<string, number>);
 
     const colors = [
-      "#3B82F6",
-      "#10B981",
-      "#F59E0B",
-      "#6366F1",
-      "#EC4899",
-      "#8B5CF6",
-      "#14B8A6",
-      "#F43F5E",
+      "#3B82F6", // Blue
+      "#10B981", // Green
+      "#F59E0B", // Yellow
+      "#6366F1", // Indigo
+      "#EC4899", // Pink
+      "#8B5CF6", // Purple
+      "#14B8A6", // Teal
+      "#F43F5E", // Rose
     ];
 
     return Object.entries(expensesByCategory).map(([name, value], index) => ({
@@ -106,63 +104,39 @@ const Index = () => {
   const { income, expenses, balance } = calculateTotals();
 
   return (
-    <div className="min-h-screen bg-gradient-to-br from-background to-background/80" dir={language === 'ar' ? 'rtl' : 'ltr'}>
+    <div className="min-h-screen bg-gradient-to-br from-[#f6d5f7] to-[#fbe9d7] dark:from-gray-900 dark:via-purple-900 dark:to-violet-900" dir={language === 'ar' ? 'rtl' : 'ltr'}>
       <div className="container mx-auto py-8 px-4">
         <div className="flex justify-between items-center mb-8 animate-fade-in">
-          <div className="flex items-center space-x-4">
-            <Avatar className="w-12 h-12 ring-2 ring-primary/20">
-              <img src="/lovable-uploads/3d0e0b87-8556-4156-9e02-c585c9994d2e.png" alt="Profile" />
-            </Avatar>
-            <div className="text-left">
-              <div className="flex items-center gap-2">
-                <span className="text-muted-foreground">{t.hello}</span>
-                <span className="text-yellow-400">👋</span>
-              </div>
-              <h2 className="text-2xl font-bold bg-gradient-to-r from-primary to-secondary bg-clip-text text-transparent">John Doe</h2>
-            </div>
-          </div>
-          <div className="flex items-center space-x-4">
-            <button className="p-2 rounded-full bg-muted hover:bg-muted/80 transition-colors">
-              <Bell className="w-5 h-5" />
-            </button>
-            <LanguageSwitcher />
-          </div>
+          <h1 className="text-4xl font-bold bg-gradient-to-r from-violet-600 to-indigo-600 bg-clip-text text-transparent">
+            {t.smartMoneyDashboard}
+          </h1>
+          <LanguageSwitcher />
         </div>
-
-        <div className="flex gap-4 mb-8">
-          <button className="px-6 py-2 rounded-full bg-primary/10 text-primary font-medium hover:bg-primary/20 transition-colors">
-            {t.today}
-          </button>
-          <button className="px-6 py-2 rounded-full bg-muted hover:bg-muted/80 transition-colors">
-            {t.learningPlan}
-          </button>
-        </div>
-
         <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
           <BalanceCard
             balance={balance}
             income={income}
             expenses={expenses}
-            className="bg-gradient-to-br from-card to-card/80 shadow-xl hover:shadow-2xl transition-all duration-300 rounded-3xl border border-border/50 hover:scale-105 animate-fade-in"
+            className="backdrop-blur-sm bg-white/40 dark:bg-gray-800/40 shadow-xl hover:shadow-2xl transition-all duration-300 rounded-xl border border-white/20 hover:scale-105 animate-fade-in"
           />
           <ExpenseChart 
             data={getExpenseData()} 
-            className="bg-gradient-to-br from-card to-card/80 shadow-xl hover:shadow-2xl transition-all duration-300 rounded-3xl border border-border/50 hover:scale-105 animate-fade-in delay-100"
+            className="backdrop-blur-sm bg-white/40 dark:bg-gray-800/40 shadow-xl hover:shadow-2xl transition-all duration-300 rounded-xl border border-white/20 hover:scale-105 animate-fade-in delay-100"
           />
           <GoalTracker 
             totalSavings={balance}
-            className="bg-gradient-to-br from-card to-card/80 shadow-xl hover:shadow-2xl transition-all duration-300 rounded-3xl border border-border/50 hover:scale-105 animate-fade-in delay-200"
+            className="backdrop-blur-sm bg-white/40 dark:bg-gray-800/40 shadow-xl hover:shadow-2xl transition-all duration-300 rounded-xl border border-white/20 hover:scale-105 animate-fade-in delay-200"
           />
           <AIAssistant
             onAddTransaction={handleAddTransaction}
-            className="bg-gradient-to-br from-card to-card/80 shadow-xl hover:shadow-2xl transition-all duration-300 rounded-3xl border border-border/50 hover:scale-105 animate-fade-in delay-300 md:col-span-3"
+            className="backdrop-blur-sm bg-white/40 dark:bg-gray-800/40 shadow-xl hover:shadow-2xl transition-all duration-300 rounded-xl border border-white/20 hover:scale-105 animate-fade-in delay-300 md:col-span-3"
           />
           <RecentTransactions
             transactions={transactions}
             onAddTransaction={handleAddTransaction}
             onUpdateTransaction={handleUpdateTransaction}
             onDeleteTransaction={handleDeleteTransaction}
-            className="bg-gradient-to-br from-card to-card/80 shadow-xl hover:shadow-2xl transition-all duration-300 rounded-3xl border border-border/50 hover:scale-105 animate-fade-in delay-400 md:col-span-3"
+            className="backdrop-blur-sm bg-white/40 dark:bg-gray-800/40 shadow-xl hover:shadow-2xl transition-all duration-300 rounded-xl border border-white/20 hover:scale-105 animate-fade-in delay-400 md:col-span-3"
           />
         </div>
       </div>
