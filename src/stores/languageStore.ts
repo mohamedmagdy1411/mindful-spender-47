@@ -1,10 +1,8 @@
 import { create } from 'zustand';
 
-type Language = 'en' | 'es' | 'fr' | 'ar';
-
-interface LanguageStore {
-  language: Language;
-  setLanguage: (lang: Language) => void;
+interface LanguageState {
+  language: 'en' | 'ar';
+  setLanguage: (language: 'en' | 'ar') => void;
 }
 
 export const translations = {
@@ -20,20 +18,11 @@ export const translations = {
     addNewGoal: "Add New Goal",
     goalName: "Goal Name",
     targetAmount: "Target Amount",
+    currentAmount: "Current Amount",
+    deadline: "Deadline",
+    save: "Save",
+    cancel: "Cancel",
     smartMoneyDashboard: "Smart Money Dashboard",
-    tellMeAboutYourDay: "Tell me about your day",
-    processText: "Process Text",
-    targetDate: "Target Date",
-    description: "Description",
-    category: "Category",
-    savings: "Savings",
-    investment: "Investment",
-    debt: "Debt",
-    leisure: "Leisure",
-    optional: "Optional",
-    updateGoal: "Update Goal",
-    remaining: "Remaining",
-    achieved: "Achieved",
     recentTransactions: "Recent Transactions",
     addTransaction: "Add Transaction",
     updateTransaction: "Update Transaction",
@@ -54,20 +43,11 @@ export const translations = {
     addNewGoal: "إضافة هدف جديد",
     goalName: "اسم الهدف",
     targetAmount: "المبلغ المستهدف",
-    smartMoneyDashboard: "لوحة تحكم الأموال الذكية",
-    tellMeAboutYourDay: "أخبرني عن يومك",
-    processText: "معالجة النص",
-    targetDate: "تاريخ الهدف",
-    description: "الوصف",
-    category: "الفئة",
-    savings: "مدخرات",
-    investment: "استثمار",
-    debt: "ديون",
-    leisure: "ترفيه",
-    optional: "اختياري",
-    updateGoal: "تحديث الهدف",
-    remaining: "المتبقي",
-    achieved: "تم تحقيق",
+    currentAmount: "المبلغ الحالي",
+    deadline: "الموعد النهائي",
+    save: "حفظ",
+    cancel: "إلغاء",
+    smartMoneyDashboard: "لوحة تحكم المال الذكية",
     recentTransactions: "المعاملات الأخيرة",
     addTransaction: "إضافة معاملة",
     updateTransaction: "تحديث المعاملة",
@@ -75,57 +55,10 @@ export const translations = {
     transactionAdded: "تمت إضافة المعاملة بنجاح",
     transactionUpdated: "تم تحديث المعاملة بنجاح",
     transactionDeleted: "تم حذف المعاملة بنجاح"
-  },
-  es: {
-    currentBalance: "Balance Actual",
-    income: "Ingresos",
-    expenses: "Gastos",
-    financialAnalytics: "Análisis Financiero",
-    expenseBreakdown: "Desglose de Gastos",
-    incomeVsExpenses: "Ingresos vs Gastos",
-    financialGoals: "Objetivos Financieros",
-    addGoal: "Añadir Objetivo",
-    addNewGoal: "Añadir Nuevo Objetivo",
-    goalName: "Nombre del Objetivo",
-    targetAmount: "Cantidad Objetivo",
-    smartMoneyDashboard: "Panel de Control Financiero",
-    tellMeAboutYourDay: "Cuéntame sobre tu día",
-    processText: "Procesar Texto",
-    recentTransactions: "Transacciones Recientes",
-    updateTransaction: "Actualizar Transacción",
-    deleteTransaction: "Eliminar Transacción",
-  },
-  fr: {
-    currentBalance: "Solde Actuel",
-    income: "Revenus",
-    expenses: "Dépenses",
-    financialAnalytics: "Analyses Financières",
-    expenseBreakdown: "Répartition des Dépenses",
-    incomeVsExpenses: "Revenus vs Dépenses",
-    financialGoals: "Objectifs Financiers",
-    addGoal: "Ajouter un Objectif",
-    addNewGoal: "Ajouter un Nouvel Objectif",
-    goalName: "Nom de l'Objectif",
-    targetAmount: "Montant Cible",
-    smartMoneyDashboard: "Tableau de Bord Financier",
-    tellMeAboutYourDay: "Racontez-moi votre journée",
-    processText: "Traiter le Texte",
-    recentTransactions: "Transactions Récentes",
-    updateTransaction: "Mettre à jour l'objectif",
-    deleteTransaction: "Supprimer la transaction",
   }
 };
 
-export const formatNumber = (number: number, language: Language) => {
-  const formatter = new Intl.NumberFormat(language === 'ar' ? 'ar-SA' : 'en-US', {
-    style: 'currency',
-    currency: 'USD',
-  });
-  
-  return formatter.format(number);
-};
-
-export const useLanguageStore = create<LanguageStore>((set) => ({
+export const useLanguageStore = create<LanguageState>((set) => ({
   language: 'ar',
-  setLanguage: (lang) => set({ language: lang }),
+  setLanguage: (language) => set({ language }),
 }));

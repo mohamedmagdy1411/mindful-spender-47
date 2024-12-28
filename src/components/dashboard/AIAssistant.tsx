@@ -5,7 +5,7 @@ import { Textarea } from "@/components/ui/textarea";
 import { Send, Volume2 } from "lucide-react";
 import { toast } from "sonner";
 import { BaseProps } from "@/types/props";
-import { useElevenLabs } from "@11labs/react";
+import { useVoice } from "@11labs/react";
 
 interface AIAssistantProps extends BaseProps {
   onAddTransaction: (transaction: {
@@ -24,7 +24,7 @@ export const AIAssistant = ({ className, onAddTransaction }: AIAssistantProps) =
   const [apiKey] = useState(DEFAULT_API_KEY);
   const [responseText, setResponseText] = useState("");
   
-  const { play, stop } = useElevenLabs({
+  const { play } = useVoice({
     apiKey: ELEVEN_LABS_KEY,
     voiceId: "21m00Tcm4TlvDq8ikWAM", // صوت عربي
   });
