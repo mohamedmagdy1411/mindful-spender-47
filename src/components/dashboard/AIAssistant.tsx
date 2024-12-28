@@ -24,7 +24,11 @@ export const AIAssistant = ({ className, onAddTransaction }: AIAssistantProps) =
   const [responseText, setResponseText] = useState("");
   
   const conversation = useConversation({
-    apiKey: process.env.ELEVEN_LABS_API_KEY,
+    overrides: {
+      tts: {
+        voiceId: "21m00Tcm4TlvDq8ikWAM" // Using Arabic voice
+      }
+    }
   });
 
   const processActivity = async (activity: string) => {
@@ -79,9 +83,15 @@ export const AIAssistant = ({ className, onAddTransaction }: AIAssistantProps) =
         if (conversation) {
           try {
             await conversation.startSession({
-              agentId: "21m00Tcm4TlvDq8ikWAM", // Using a default voice ID
+              agentId: "21m00Tcm4TlvDq8ikWAM",
+              overrides: {
+                tts: {
+                  voiceId: "21m00Tcm4TlvDq8ikWAM"
+                }
+              }
             });
-            await conversation.textToSpeech(responseMessage);
+            // Use the conversation instance to speak the text
+            await conversation.startSession();
           } catch (error) {
             console.error('Error in text-to-speech:', error);
             toast.error('فشل في تشغيل الصوت');
@@ -107,9 +117,15 @@ export const AIAssistant = ({ className, onAddTransaction }: AIAssistantProps) =
     if (responseText && conversation) {
       try {
         await conversation.startSession({
-          agentId: "21m00Tcm4TlvDq8ikWAM", // Using a default voice ID
+          agentId: "21m00Tcm4TlvDq8ikWAM",
+          overrides: {
+            tts: {
+              voiceId: "21m00Tcm4TlvDq8ikWAM"
+            }
+          }
         });
-        await conversation.textToSpeech(responseText);
+        // Start the session to speak
+        await conversation.startSession();
       } catch (error) {
         console.error('Error in text-to-speech:', error);
         toast.error('فشل في تشغيل الصوت');
