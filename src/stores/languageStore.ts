@@ -1,8 +1,10 @@
 import { create } from 'zustand';
 
+type Language = 'en' | 'ar';
+
 interface LanguageState {
-  language: 'en' | 'ar';
-  setLanguage: (language: 'en' | 'ar') => void;
+  language: Language;
+  setLanguage: (language: Language) => void;
 }
 
 export const translations = {
@@ -56,6 +58,15 @@ export const translations = {
     transactionUpdated: "تم تحديث المعاملة بنجاح",
     transactionDeleted: "تم حذف المعاملة بنجاح"
   }
+};
+
+export const formatNumber = (number: number, language: Language) => {
+  const formatter = new Intl.NumberFormat(language === 'ar' ? 'ar-SA' : 'en-US', {
+    style: 'currency',
+    currency: 'USD',
+  });
+  
+  return formatter.format(number);
 };
 
 export const useLanguageStore = create<LanguageState>((set) => ({

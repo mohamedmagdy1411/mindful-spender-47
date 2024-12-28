@@ -5,7 +5,7 @@ import { Textarea } from "@/components/ui/textarea";
 import { Send, Volume2 } from "lucide-react";
 import { toast } from "sonner";
 import { BaseProps } from "@/types/props";
-import { useVoice } from "@11labs/react";
+import { useConversation } from "@11labs/react";
 
 interface AIAssistantProps extends BaseProps {
   onAddTransaction: (transaction: {
@@ -24,9 +24,8 @@ export const AIAssistant = ({ className, onAddTransaction }: AIAssistantProps) =
   const [apiKey] = useState(DEFAULT_API_KEY);
   const [responseText, setResponseText] = useState("");
   
-  const { play } = useVoice({
+  const conversation = useConversation({
     apiKey: ELEVEN_LABS_KEY,
-    voiceId: "21m00Tcm4TlvDq8ikWAM", // صوت عربي
   });
 
   const processActivity = async (activity: string) => {
@@ -76,6 +75,14 @@ export const AIAssistant = ({ className, onAddTransaction }: AIAssistantProps) =
         const responseMessage = "تم إضافة المعاملات بنجاح!";
         setResponseText(responseMessage);
         toast.success(responseMessage);
+        
+        // Play the response using text-to-speech
+        if (conversation) {
+          await conversation.startSession({
+            agentId: "21m00Tcm4TlvDq8ikWAM",
+          });
+          conversation.setVolume({ volume: 1.0 });
+        }
       } else {
         const responseMessage = "لم يتم العثور على معاملات مالية في النشاط";
         setResponseText(responseMessage);
@@ -92,9 +99,17 @@ export const AIAssistant = ({ className, onAddTransaction }: AIAssistantProps) =
     }
   };
 
-  const handleSpeak = () => {
-    if (responseText) {
-      play(responseText);
+  const handleSpeak = async () => {
+    if (responseText && conversation) {
+      try {
+        await conversation.startSession({
+          agentId: "21m00Tcm4TlvDq8ikWAM",
+        });
+        // The conversation will automatically handle the text-to-speech
+      } catch (error) {
+        console.error('Error in text-to-speech:', error);
+        toast.error('فشل في تشغيل الصوت');
+      }
     }
   };
 
