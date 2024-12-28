@@ -2,9 +2,10 @@ import { useState } from "react";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { Textarea } from "@/components/ui/textarea";
-import { Send } from "lucide-react";
+import { Send, Volume2 } from "lucide-react";
 import { toast } from "sonner";
 import { BaseProps } from "@/types/props";
+import { useElevenLabs } from "@11labs/react";
 
 interface AIAssistantProps extends BaseProps {
   onAddTransaction: (transaction: {
@@ -15,11 +16,18 @@ interface AIAssistantProps extends BaseProps {
 }
 
 const DEFAULT_API_KEY = "AIzaSyBzf8G9oFSfdI-8fc7bjFHw5JdXxOUrA-g";
+const ELEVEN_LABS_KEY = "YOUR_ELEVEN_LABS_API_KEY"; // يجب استبدالها بمفتاح API الخاص بك
 
 export const AIAssistant = ({ className, onAddTransaction }: AIAssistantProps) => {
   const [text, setText] = useState("");
   const [isProcessing, setIsProcessing] = useState(false);
   const [apiKey] = useState(DEFAULT_API_KEY);
+  const [responseText, setResponseText] = useState("");
+  
+  const { play, stop } = useElevenLabs({
+    apiKey: ELEVEN_LABS_KEY,
+    voiceId: "21m00Tcm4TlvDq8ikWAM", // صوت عربي
+  });
 
   const processActivity = async (activity: string) => {
     try {
@@ -65,16 +73,28 @@ export const AIAssistant = ({ className, onAddTransaction }: AIAssistantProps) =
         aiResponse.transactions.forEach((transaction: any) => {
           onAddTransaction(transaction);
         });
-        toast.success("تم إضافة المعاملات بنجاح!");
+        const responseMessage = "تم إضافة المعاملات بنجاح!";
+        setResponseText(responseMessage);
+        toast.success(responseMessage);
       } else {
-        toast.info("لم يتم العثور على معاملات مالية في النشاط");
+        const responseMessage = "لم يتم العثور على معاملات مالية في النشاط";
+        setResponseText(responseMessage);
+        toast.info(responseMessage);
       }
     } catch (error) {
       console.error('Error processing activity:', error);
-      toast.error("فشل في معالجة النشاط. يرجى المحاولة مرة أخرى.");
+      const errorMessage = "فشل في معالجة النشاط. يرجى المحاولة مرة أخرى.";
+      setResponseText(errorMessage);
+      toast.error(errorMessage);
     } finally {
       setIsProcessing(false);
       setText("");
+    }
+  };
+
+  const handleSpeak = () => {
+    if (responseText) {
+      play(responseText);
     }
   };
 
@@ -96,15 +116,24 @@ export const AIAssistant = ({ className, onAddTransaction }: AIAssistantProps) =
             />
           </div>
 
-          <div className="flex space-x-2">
+          <div className="flex space-x-2 rtl:space-x-reverse">
             <Button
               onClick={() => processActivity(text)}
               disabled={isProcessing || !text}
               className="flex-1"
             >
-              <Send className="w-4 h-4 mr-2" />
+              <Send className="w-4 h-4 mr-2 rtl:ml-2 rtl:mr-0" />
               معالجة النص
             </Button>
+            {responseText && (
+              <Button
+                variant="outline"
+                onClick={handleSpeak}
+                className="px-3"
+              >
+                <Volume2 className="w-4 h-4" />
+              </Button>
+            )}
           </div>
         </div>
       </CardContent>
