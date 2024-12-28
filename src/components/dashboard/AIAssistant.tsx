@@ -84,14 +84,13 @@ export const AIAssistant = ({ className, onAddTransaction }: AIAssistantProps) =
           try {
             await conversation.startSession({
               agentId: "21m00Tcm4TlvDq8ikWAM",
+              text: responseMessage,
               overrides: {
                 tts: {
                   voiceId: "21m00Tcm4TlvDq8ikWAM"
                 }
               }
             });
-            // Use the conversation instance to speak the text
-            await conversation.startSession();
           } catch (error) {
             console.error('Error in text-to-speech:', error);
             toast.error('فشل في تشغيل الصوت');
@@ -118,14 +117,13 @@ export const AIAssistant = ({ className, onAddTransaction }: AIAssistantProps) =
       try {
         await conversation.startSession({
           agentId: "21m00Tcm4TlvDq8ikWAM",
+          text: responseText,
           overrides: {
             tts: {
               voiceId: "21m00Tcm4TlvDq8ikWAM"
             }
           }
         });
-        // Start the session to speak
-        await conversation.startSession();
       } catch (error) {
         console.error('Error in text-to-speech:', error);
         toast.error('فشل في تشغيل الصوت');
