@@ -16,7 +16,6 @@ interface AIAssistantProps extends BaseProps {
 }
 
 const DEFAULT_API_KEY = "AIzaSyBzf8G9oFSfdI-8fc7bjFHw5JdXxOUrA-g";
-const ELEVEN_LABS_KEY = "YOUR_ELEVEN_LABS_API_KEY"; // يجب استبدالها بمفتاح API الخاص بك
 
 export const AIAssistant = ({ className, onAddTransaction }: AIAssistantProps) => {
   const [text, setText] = useState("");
@@ -25,7 +24,7 @@ export const AIAssistant = ({ className, onAddTransaction }: AIAssistantProps) =
   const [responseText, setResponseText] = useState("");
   
   const conversation = useConversation({
-    apiKey: ELEVEN_LABS_KEY,
+    apiKey: process.env.ELEVEN_LABS_API_KEY,
   });
 
   const processActivity = async (activity: string) => {
@@ -78,10 +77,15 @@ export const AIAssistant = ({ className, onAddTransaction }: AIAssistantProps) =
         
         // Play the response using text-to-speech
         if (conversation) {
-          await conversation.startSession({
-            agentId: "21m00Tcm4TlvDq8ikWAM",
-          });
-          conversation.setVolume({ volume: 1.0 });
+          try {
+            await conversation.startSession({
+              agentId: "21m00Tcm4TlvDq8ikWAM", // Using a default voice ID
+            });
+            await conversation.textToSpeech(responseMessage);
+          } catch (error) {
+            console.error('Error in text-to-speech:', error);
+            toast.error('فشل في تشغيل الصوت');
+          }
         }
       } else {
         const responseMessage = "لم يتم العثور على معاملات مالية في النشاط";
@@ -103,9 +107,9 @@ export const AIAssistant = ({ className, onAddTransaction }: AIAssistantProps) =
     if (responseText && conversation) {
       try {
         await conversation.startSession({
-          agentId: "21m00Tcm4TlvDq8ikWAM",
+          agentId: "21m00Tcm4TlvDq8ikWAM", // Using a default voice ID
         });
-        // The conversation will automatically handle the text-to-speech
+        await conversation.textToSpeech(responseText);
       } catch (error) {
         console.error('Error in text-to-speech:', error);
         toast.error('فشل في تشغيل الصوت');
