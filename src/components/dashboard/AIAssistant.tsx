@@ -84,8 +84,11 @@ export const AIAssistant = ({ className, onAddTransaction }: AIAssistantProps) =
           try {
             await conversation.startSession({
               agentId: "21m00Tcm4TlvDq8ikWAM",
-              text: responseMessage,
               overrides: {
+                agent: {
+                  firstMessage: responseMessage,
+                  language: "ar"
+                },
                 tts: {
                   voiceId: "21m00Tcm4TlvDq8ikWAM"
                 }
@@ -117,8 +120,11 @@ export const AIAssistant = ({ className, onAddTransaction }: AIAssistantProps) =
       try {
         await conversation.startSession({
           agentId: "21m00Tcm4TlvDq8ikWAM",
-          text: responseText,
           overrides: {
+            agent: {
+              firstMessage: responseText,
+              language: "ar"
+            },
             tts: {
               voiceId: "21m00Tcm4TlvDq8ikWAM"
             }
