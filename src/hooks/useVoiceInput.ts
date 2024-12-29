@@ -26,23 +26,31 @@ export const useVoiceInput = (onTranscript: (text: string) => void) => {
     };
   }, [isListening, conversation]);
 
+  const checkMicrophonePermission = async () => {
+    try {
+      const stream = await navigator.mediaDevices.getUserMedia({ audio: true });
+      stream.getTracks().forEach(track => track.stop());
+      return true;
+    } catch (error) {
+      console.error('Microphone permission error:', error);
+      return false;
+    }
+  };
+
   const toggleVoiceInput = async () => {
     try {
       if (isListening) {
         await conversation.endSession();
         setIsListening(false);
+        toast.success('تم إيقاف التسجيل');
       } else {
-        // First check if microphone permission is already granted
-        const devices = await navigator.mediaDevices.enumerateDevices();
-        const hasMicrophonePermission = devices.some(device => device.kind === 'audioinput' && device.label);
+        const hasPermission = await checkMicrophonePermission();
         
-        if (!hasMicrophonePermission) {
-          // Request microphone permission explicitly
-          const stream = await navigator.mediaDevices.getUserMedia({ audio: true });
-          // Stop the stream immediately as we just needed the permission
-          stream.getTracks().forEach(track => track.stop());
+        if (!hasPermission) {
+          toast.error('يرجى السماح بالوصول إلى الميكروفون في إعدادات المتصفح');
+          return;
         }
-        
+
         await conversation.startSession({
           agentId: "21m00Tcm4TlvDq8ikWAM",
           overrides: {
@@ -60,9 +68,9 @@ export const useVoiceInput = (onTranscript: (text: string) => void) => {
     } catch (error) {
       console.error('Error toggling voice input:', error);
       if (error instanceof DOMException && error.name === 'NotAllowedError') {
-        toast.error('يرجى السماح بالوصول إلى الميكروفون');
+        toast.error('يرجى السماح بالوصول إلى الميكروفون في إعدادات المتصفح');
       } else {
-        toast.error('فشل في تشغيل الميكروفون');
+        toast.error('فشل في تشغيل الميكروفون. يرجى المحاولة مرة أخرى');
       }
       setIsListening(false);
     }
