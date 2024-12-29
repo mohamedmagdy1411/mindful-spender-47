@@ -6,22 +6,14 @@ export const useVoiceInput = (onTranscript: (text: string) => void) => {
   const [isListening, setIsListening] = useState(false);
 
   const conversation = useConversation({
-    overrides: {
-      tts: {
-        voiceId: "21m00Tcm4TlvDq8ikWAM" // Using Arabic voice
-      },
-      agent: {
-        language: "ar"
-      }
-    },
     onMessage: (message) => {
-      if (message.message && typeof message.message === 'string') {
+      if (message.type === 'transcript' && message.message) {
         onTranscript(message.message);
       }
     },
     onError: (error) => {
       console.error('Conversation error:', error);
-      toast.error('حدث خطأ في المحادثة');
+      toast.error('فشل في المحادثة');
       setIsListening(false);
     }
   });
