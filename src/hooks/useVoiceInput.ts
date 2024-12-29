@@ -6,8 +6,8 @@ export const useVoiceInput = (onTranscript: (text: string) => void) => {
   const [isListening, setIsListening] = useState(false);
 
   const conversation = useConversation({
-    onMessage: (message) => {
-      if (message.type === 'transcript' && message.message) {
+    onMessage: (message: any) => {
+      if (message.message && typeof message.message === 'string') {
         onTranscript(message.message);
       }
     },
