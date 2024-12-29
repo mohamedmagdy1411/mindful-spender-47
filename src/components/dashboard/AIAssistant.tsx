@@ -1,8 +1,8 @@
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { Textarea } from "@/components/ui/textarea";
-import { Send, Volume2 } from "lucide-react";
+import { Send, Volume2, Mic, MicOff } from "lucide-react";
 import { toast } from "sonner";
 import { BaseProps } from "@/types/props";
 import { useConversation } from "@11labs/react";
@@ -22,14 +22,66 @@ export const AIAssistant = ({ className, onAddTransaction }: AIAssistantProps) =
   const [isProcessing, setIsProcessing] = useState(false);
   const [apiKey] = useState(DEFAULT_API_KEY);
   const [responseText, setResponseText] = useState("");
+  const [isListening, setIsListening] = useState(false);
   
   const conversation = useConversation({
     overrides: {
       tts: {
         voiceId: "21m00Tcm4TlvDq8ikWAM" // Using Arabic voice
+      },
+      agent: {
+        language: "ar"
       }
+    },
+    onMessage: (message) => {
+      if (message.type === 'transcript' && message.text) {
+        setText((prevText) => prevText + ' ' + message.text);
+      }
+    },
+    onError: (error) => {
+      console.error('Conversation error:', error);
+      toast.error('حدث خطأ في المحادثة');
+      setIsListening(false);
     }
   });
+
+  useEffect(() => {
+    return () => {
+      if (isListening) {
+        conversation.endSession();
+      }
+    };
+  }, [isListening, conversation]);
+
+  const toggleVoiceInput = async () => {
+    try {
+      if (isListening) {
+        await conversation.endSession();
+        setIsListening(false);
+      } else {
+        // Request microphone permission
+        await navigator.mediaDevices.getUserMedia({ audio: true });
+        
+        await conversation.startSession({
+          agentId: "21m00Tcm4TlvDq8ikWAM",
+          overrides: {
+            agent: {
+              language: "ar"
+            },
+            tts: {
+              voiceId: "21m00Tcm4TlvDq8ikWAM"
+            }
+          }
+        });
+        setIsListening(true);
+        toast.success('جارٍ الاستماع...');
+      }
+    } catch (error) {
+      console.error('Error toggling voice input:', error);
+      toast.error('فشل في تشغيل الميكروفون');
+      setIsListening(false);
+    }
+  };
 
   const processActivity = async (activity: string) => {
     try {
@@ -146,13 +198,27 @@ export const AIAssistant = ({ className, onAddTransaction }: AIAssistantProps) =
         <div className="space-y-4">
           <div className="space-y-2">
             <label className="text-sm font-medium">أخبرني عن يومك</label>
-            <Textarea
-              value={text}
-              onChange={(e) => setText(e.target.value)}
-              placeholder="مثال: ذهبت إلى السوبر ماركت وأنفقت 50 دولارًا على البقالة، ثم استلمت راتبي 3000 دولار"
-              className="min-h-[100px] text-right"
-              dir="rtl"
-            />
+            <div className="relative">
+              <Textarea
+                value={text}
+                onChange={(e) => setText(e.target.value)}
+                placeholder="مثال: ذهبت إلى السوبر ماركت وأنفقت 50 دولارًا على البقالة، ثم استلمت راتبي 3000 دولار"
+                className="min-h-[100px] text-right pr-12"
+                dir="rtl"
+              />
+              <Button
+                variant="ghost"
+                size="icon"
+                className="absolute left-2 bottom-2"
+                onClick={toggleVoiceInput}
+              >
+                {isListening ? (
+                  <MicOff className="h-4 w-4 text-red-500" />
+                ) : (
+                  <Mic className="h-4 w-4 text-gray-500" />
+                )}
+              </Button>
+            </div>
           </div>
 
           <div className="flex space-x-2 rtl:space-x-reverse">
