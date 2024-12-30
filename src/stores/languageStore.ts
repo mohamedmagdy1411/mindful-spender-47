@@ -31,7 +31,11 @@ export const translations = {
     deleteTransaction: "Delete Transaction",
     transactionAdded: "Transaction added successfully",
     transactionUpdated: "Transaction updated successfully",
-    transactionDeleted: "Transaction deleted successfully"
+    transactionDeleted: "Transaction deleted successfully",
+    // Add missing translations
+    errorLoadingTransactions: "Error loading transactions",
+    transactionError: "Error processing transaction",
+    signIn: "Sign in with Google"
   },
   ar: {
     currentBalance: "الرصيد الحالي",
@@ -56,7 +60,11 @@ export const translations = {
     deleteTransaction: "حذف المعاملة",
     transactionAdded: "تمت إضافة المعاملة بنجاح",
     transactionUpdated: "تم تحديث المعاملة بنجاح",
-    transactionDeleted: "تم حذف المعاملة بنجاح"
+    transactionDeleted: "تم حذف المعاملة بنجاح",
+    // Add missing translations
+    errorLoadingTransactions: "خطأ في تحميل المعاملات",
+    transactionError: "خطأ في معالجة المعاملة",
+    signIn: "تسجيل الدخول باستخدام جوجل"
   }
 };
 
