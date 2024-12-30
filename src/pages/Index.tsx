@@ -1,4 +1,4 @@
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import { BalanceCard } from "@/components/dashboard/BalanceCard";
 import { ExpenseChart } from "@/components/dashboard/ExpenseChart";
 import { RecentTransactions } from "@/components/dashboard/RecentTransactions";
@@ -7,35 +7,97 @@ import { AIAssistant } from "@/components/dashboard/AIAssistant";
 import { Transaction } from "@/types/props";
 import { useLanguageStore, translations } from "@/stores/languageStore";
 import { LanguageSwitcher } from "@/components/LanguageSwitcher";
-
-const initialTransactions: Transaction[] = [
-  {
-    id: "1",
-    type: "expense",
-    amount: 120,
-    category: "Groceries",
-    date: "2024-03-10",
-  },
-  {
-    id: "2",
-    type: "income",
-    amount: 2500,
-    category: "Salary",
-    date: "2024-03-09",
-  },
-  {
-    id: "3",
-    type: "expense",
-    amount: 50,
-    category: "Transport",
-    date: "2024-03-08",
-  },
-];
+import { supabase } from "@/integrations/supabase/client";
+import { useQuery, useMutation, useQueryClient } from "@tanstack/react-query";
+import { toast } from "sonner";
 
 const Index = () => {
-  const [transactions, setTransactions] = useState<Transaction[]>(initialTransactions);
   const { language } = useLanguageStore();
   const t = translations[language];
+  const queryClient = useQueryClient();
+
+  // Fetch transactions
+  const { data: transactions = [], isLoading } = useQuery({
+    queryKey: ['transactions'],
+    queryFn: async () => {
+      const { data, error } = await supabase
+        .from('transactions')
+        .select('*')
+        .order('date', { ascending: false });
+
+      if (error) {
+        toast.error('Failed to load transactions');
+        throw error;
+      }
+
+      return data || [];
+    },
+  });
+
+  // Add transaction mutation
+  const addTransactionMutation = useMutation({
+    mutationFn: async (newTransaction: Omit<Transaction, 'id' | 'date'>) => {
+      const { data, error } = await supabase
+        .from('transactions')
+        .insert([{
+          ...newTransaction,
+          date: new Date().toISOString(),
+        }])
+        .select()
+        .single();
+
+      if (error) throw error;
+      return data;
+    },
+    onSuccess: () => {
+      queryClient.invalidateQueries({ queryKey: ['transactions'] });
+      toast.success(t.transactionAdded);
+    },
+    onError: () => {
+      toast.error(t.errorAddingTransaction);
+    },
+  });
+
+  // Update transaction mutation
+  const updateTransactionMutation = useMutation({
+    mutationFn: async ({ id, transaction }: { id: string, transaction: Omit<Transaction, 'id' | 'date'> }) => {
+      const { data, error } = await supabase
+        .from('transactions')
+        .update(transaction)
+        .eq('id', id)
+        .select()
+        .single();
+
+      if (error) throw error;
+      return data;
+    },
+    onSuccess: () => {
+      queryClient.invalidateQueries({ queryKey: ['transactions'] });
+      toast.success(t.transactionUpdated);
+    },
+    onError: () => {
+      toast.error(t.errorUpdatingTransaction);
+    },
+  });
+
+  // Delete transaction mutation
+  const deleteTransactionMutation = useMutation({
+    mutationFn: async (id: string) => {
+      const { error } = await supabase
+        .from('transactions')
+        .delete()
+        .eq('id', id);
+
+      if (error) throw error;
+    },
+    onSuccess: () => {
+      queryClient.invalidateQueries({ queryKey: ['transactions'] });
+      toast.success(t.transactionDeleted);
+    },
+    onError: () => {
+      toast.error(t.errorDeletingTransaction);
+    },
+  });
 
   const calculateTotals = () => {
     const income = transactions
@@ -56,14 +118,8 @@ const Index = () => {
       }, {} as Record<string, number>);
 
     const colors = [
-      "#3B82F6", // Blue
-      "#10B981", // Green
-      "#F59E0B", // Yellow
-      "#6366F1", // Indigo
-      "#EC4899", // Pink
-      "#8B5CF6", // Purple
-      "#14B8A6", // Teal
-      "#F43F5E", // Rose
+      "#3B82F6", "#10B981", "#F59E0B", "#6366F1", 
+      "#EC4899", "#8B5CF6", "#14B8A6", "#F43F5E"
     ];
 
     return Object.entries(expensesByCategory).map(([name, value], index) => ({
@@ -74,34 +130,29 @@ const Index = () => {
   };
 
   const handleAddTransaction = (newTransaction: Omit<Transaction, "id" | "date">) => {
-    setTransactions((prev) => [
-      {
-        ...newTransaction,
-        id: Math.random().toString(36).substr(2, 9),
-        date: new Date().toISOString().split("T")[0],
-      },
-      ...prev,
-    ]);
+    addTransactionMutation.mutate(newTransaction);
   };
 
   const handleUpdateTransaction = (
     id: string,
     updatedTransaction: Omit<Transaction, "id" | "date">
   ) => {
-    setTransactions((prev) =>
-      prev.map((t) =>
-        t.id === id
-          ? { ...t, ...updatedTransaction }
-          : t
-      )
-    );
+    updateTransactionMutation.mutate({ id, transaction: updatedTransaction });
   };
 
   const handleDeleteTransaction = (id: string) => {
-    setTransactions((prev) => prev.filter((t) => t.id !== id));
+    deleteTransactionMutation.mutate(id);
   };
 
   const { income, expenses, balance } = calculateTotals();
+
+  if (isLoading) {
+    return (
+      <div className="min-h-screen bg-gradient-to-br from-[#F2FCE2] to-[#D3E4FD] dark:from-[#1A1F2C] dark:to-[#2C1A2F] flex items-center justify-center">
+        <div className="animate-spin rounded-full h-32 w-32 border-b-2 border-primary"></div>
+      </div>
+    );
+  }
 
   return (
     <div className="min-h-screen bg-gradient-to-br from-[#F2FCE2] to-[#D3E4FD] dark:from-[#1A1F2C] dark:to-[#2C1A2F]" dir={language === 'ar' ? 'rtl' : 'ltr'}>
