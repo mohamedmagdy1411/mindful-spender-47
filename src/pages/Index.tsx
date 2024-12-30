@@ -104,40 +104,55 @@ const Index = () => {
   const { income, expenses, balance } = calculateTotals();
 
   return (
-    <div className="min-h-screen bg-gradient-to-br from-[#f6d5f7] to-[#fbe9d7] dark:from-gray-900 dark:via-purple-900 dark:to-violet-900" dir={language === 'ar' ? 'rtl' : 'ltr'}>
+    <div className="min-h-screen bg-gradient-to-br from-[#F2FCE2] to-[#D3E4FD] dark:from-[#1A1F2C] dark:to-[#2C1A2F]" dir={language === 'ar' ? 'rtl' : 'ltr'}>
       <div className="container mx-auto py-8 px-4">
-        <div className="flex justify-between items-center mb-8 animate-fade-in">
-          <h1 className="text-4xl font-bold bg-gradient-to-r from-violet-600 to-indigo-600 bg-clip-text text-transparent">
+        <div className="flex justify-between items-center mb-8">
+          <h1 className="text-4xl font-bold bg-gradient-to-r from-[#33C3F0] to-[#0EA5E9] bg-clip-text text-transparent animate-fade-in">
             {t.smartMoneyDashboard}
           </h1>
           <LanguageSwitcher />
         </div>
-        <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
-          <BalanceCard
-            balance={balance}
-            income={income}
-            expenses={expenses}
-            className="backdrop-blur-sm bg-white/40 dark:bg-gray-800/40 shadow-xl hover:shadow-2xl transition-all duration-300 rounded-xl border border-white/20 hover:scale-105 animate-fade-in"
-          />
-          <ExpenseChart 
-            data={getExpenseData()} 
-            className="backdrop-blur-sm bg-white/40 dark:bg-gray-800/40 shadow-xl hover:shadow-2xl transition-all duration-300 rounded-xl border border-white/20 hover:scale-105 animate-fade-in delay-100"
-          />
-          <GoalTracker 
-            totalSavings={balance}
-            className="backdrop-blur-sm bg-white/40 dark:bg-gray-800/40 shadow-xl hover:shadow-2xl transition-all duration-300 rounded-xl border border-white/20 hover:scale-105 animate-fade-in delay-200"
-          />
-          <AIAssistant
-            onAddTransaction={handleAddTransaction}
-            className="backdrop-blur-sm bg-white/40 dark:bg-gray-800/40 shadow-xl hover:shadow-2xl transition-all duration-300 rounded-xl border border-white/20 hover:scale-105 animate-fade-in delay-300 md:col-span-3"
-          />
-          <RecentTransactions
-            transactions={transactions}
-            onAddTransaction={handleAddTransaction}
-            onUpdateTransaction={handleUpdateTransaction}
-            onDeleteTransaction={handleDeleteTransaction}
-            className="backdrop-blur-sm bg-white/40 dark:bg-gray-800/40 shadow-xl hover:shadow-2xl transition-all duration-300 rounded-xl border border-white/20 hover:scale-105 animate-fade-in delay-400 md:col-span-3"
-          />
+        
+        <div className="grid grid-cols-1 md:grid-cols-12 gap-6">
+          <div className="md:col-span-4 animate-fade-in [animation-delay:200ms]">
+            <BalanceCard
+              balance={balance}
+              income={income}
+              expenses={expenses}
+              className="backdrop-blur-sm bg-white/60 dark:bg-gray-800/40 shadow-lg hover:shadow-xl transition-all duration-300 rounded-2xl border border-white/20 hover:translate-y-[-4px] group"
+            />
+          </div>
+          
+          <div className="md:col-span-4 animate-fade-in [animation-delay:400ms]">
+            <ExpenseChart 
+              data={getExpenseData()} 
+              className="backdrop-blur-sm bg-white/60 dark:bg-gray-800/40 shadow-lg hover:shadow-xl transition-all duration-300 rounded-2xl border border-white/20 hover:translate-y-[-4px] group"
+            />
+          </div>
+          
+          <div className="md:col-span-4 animate-fade-in [animation-delay:600ms]">
+            <GoalTracker 
+              totalSavings={balance}
+              className="backdrop-blur-sm bg-white/60 dark:bg-gray-800/40 shadow-lg hover:shadow-xl transition-all duration-300 rounded-2xl border border-white/20 hover:translate-y-[-4px] group"
+            />
+          </div>
+          
+          <div className="md:col-span-12 animate-fade-in [animation-delay:800ms]">
+            <AIAssistant
+              onAddTransaction={handleAddTransaction}
+              className="backdrop-blur-sm bg-white/60 dark:bg-gray-800/40 shadow-lg hover:shadow-xl transition-all duration-300 rounded-2xl border border-white/20 hover:translate-y-[-4px] group"
+            />
+          </div>
+          
+          <div className="md:col-span-12 animate-fade-in [animation-delay:1000ms]">
+            <RecentTransactions
+              transactions={transactions}
+              onAddTransaction={handleAddTransaction}
+              onUpdateTransaction={handleUpdateTransaction}
+              onDeleteTransaction={handleDeleteTransaction}
+              className="backdrop-blur-sm bg-white/60 dark:bg-gray-800/40 shadow-lg hover:shadow-xl transition-all duration-300 rounded-2xl border border-white/20 hover:translate-y-[-4px] group"
+            />
+          </div>
         </div>
       </div>
     </div>
