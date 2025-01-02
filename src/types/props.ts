@@ -22,24 +22,20 @@ export interface GoalTrackerProps extends BaseProps {
   totalSavings: number;
 }
 
-export type TransactionType = 'income' | 'expense';
-
-export interface Transaction {
+export type Transaction = {
   id: string;
-  user_id?: string;
-  type: TransactionType;
+  type: "income" | "expense";
   amount: number;
   category: string;
   date: string;
-  created_at?: string;
-}
+};
 
 export interface RecentTransactionsProps extends BaseProps {
   transactions: Transaction[];
-  onAddTransaction: (newTransaction: Omit<Transaction, "id" | "date" | "user_id" | "created_at">) => void;
+  onAddTransaction: (newTransaction: Omit<Transaction, "id" | "date">) => void;
   onUpdateTransaction: (
     id: string,
-    updatedTransaction: Omit<Transaction, "id" | "date" | "user_id" | "created_at">
+    updatedTransaction: Omit<Transaction, "id" | "date">
   ) => void;
   onDeleteTransaction: (id: string) => void;
 }
