@@ -22,6 +22,7 @@ const Index = () => {
   const t = translations[language];
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
+  const [isSubmitting, setIsSubmitting] = useState(false);
   
   const {
     transactions,
@@ -33,30 +34,60 @@ const Index = () => {
     getExpenseData
   } = useTransactions();
 
+  const validateForm = () => {
+    if (!email || !email.trim()) {
+      toast.error("Email is required");
+      return false;
+    }
+    if (!password || password.length < 6) {
+      toast.error("Password must be at least 6 characters");
+      return false;
+    }
+    return true;
+  };
+
   const handleSignUp = async (e: React.FormEvent) => {
     e.preventDefault();
+    if (!validateForm() || isSubmitting) return;
+    
     try {
-      const { error } = await supabase.auth.signUp({
-        email,
-        password,
+      setIsSubmitting(true);
+      const { data, error } = await supabase.auth.signUp({
+        email: email.trim(),
+        password: password,
+        options: {
+          emailRedirectTo: window.location.origin
+        }
       });
+      
       if (error) throw error;
       toast.success("Check your email for the confirmation link");
+      
     } catch (error: any) {
       toast.error(error.message);
+    } finally {
+      setIsSubmitting(false);
     }
   };
 
   const handleSignIn = async (e: React.FormEvent) => {
     e.preventDefault();
+    if (!validateForm() || isSubmitting) return;
+    
     try {
-      const { error } = await supabase.auth.signInWithPassword({
-        email,
-        password,
+      setIsSubmitting(true);
+      const { data, error } = await supabase.auth.signInWithPassword({
+        email: email.trim(),
+        password: password
       });
+      
       if (error) throw error;
+      toast.success("Successfully signed in!");
+      
     } catch (error: any) {
       toast.error(error.message);
+    } finally {
+      setIsSubmitting(false);
     }
   };
 
@@ -74,13 +105,15 @@ const Index = () => {
         <div className="w-full max-w-md space-y-8 p-8 bg-white/80 dark:bg-gray-800/80 rounded-xl shadow-lg backdrop-blur-sm">
           <div className="space-y-4">
             <h2 className="text-3xl font-bold text-center">Welcome</h2>
-            <form className="space-y-4">
+            <form className="space-y-4" onSubmit={(e) => e.preventDefault()}>
               <div>
                 <Input
                   type="email"
                   placeholder="Email"
                   value={email}
                   onChange={(e) => setEmail(e.target.value)}
+                  disabled={isSubmitting}
+                  required
                 />
               </div>
               <div>
@@ -89,23 +122,28 @@ const Index = () => {
                   placeholder="Password"
                   value={password}
                   onChange={(e) => setPassword(e.target.value)}
+                  disabled={isSubmitting}
+                  required
+                  minLength={6}
                 />
               </div>
               <div className="space-y-2">
                 <Button
                   onClick={handleSignIn}
                   className="w-full"
-                  type="button"
+                  type="submit"
+                  disabled={isSubmitting}
                 >
-                  Sign In
+                  {isSubmitting ? "Signing in..." : "Sign In"}
                 </Button>
                 <Button
                   onClick={handleSignUp}
                   className="w-full"
                   variant="outline"
                   type="button"
+                  disabled={isSubmitting}
                 >
-                  Sign Up
+                  {isSubmitting ? "Signing up..." : "Sign Up"}
                 </Button>
               </div>
             </form>
