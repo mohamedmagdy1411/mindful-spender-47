@@ -13,11 +13,15 @@ import { toast } from "sonner";
 import { useAuth } from "@/contexts/AuthContext";
 import { useTransactions } from "@/hooks/useTransactions";
 import { DashboardLayout } from "@/components/layouts/DashboardLayout";
+import { Input } from "@/components/ui/input";
+import { Button } from "@/components/ui/button";
 
 const Index = () => {
   const { user, loading: authLoading } = useAuth();
   const { language } = useLanguageStore();
   const t = translations[language];
+  const [email, setEmail] = useState("");
+  const [password, setPassword] = useState("");
   
   const {
     transactions,
@@ -28,6 +32,33 @@ const Index = () => {
     calculateTotals,
     getExpenseData
   } = useTransactions();
+
+  const handleSignUp = async (e: React.FormEvent) => {
+    e.preventDefault();
+    try {
+      const { error } = await supabase.auth.signUp({
+        email,
+        password,
+      });
+      if (error) throw error;
+      toast.success("Check your email for the confirmation link");
+    } catch (error: any) {
+      toast.error(error.message);
+    }
+  };
+
+  const handleSignIn = async (e: React.FormEvent) => {
+    e.preventDefault();
+    try {
+      const { error } = await supabase.auth.signInWithPassword({
+        email,
+        password,
+      });
+      if (error) throw error;
+    } catch (error: any) {
+      toast.error(error.message);
+    }
+  };
 
   if (authLoading) {
     return (
@@ -40,12 +71,46 @@ const Index = () => {
   if (!user) {
     return (
       <div className="min-h-screen bg-gradient-to-br from-[#F2FCE2] to-[#D3E4FD] dark:from-[#1A1F2C] dark:to-[#2C1A2F] flex items-center justify-center">
-        <button
-          onClick={() => supabase.auth.signInWithOAuth({ provider: 'google' })}
-          className="px-6 py-3 bg-primary text-white rounded-lg hover:bg-primary/90 transition-colors"
-        >
-          {t.signIn}
-        </button>
+        <div className="w-full max-w-md space-y-8 p-8 bg-white/80 dark:bg-gray-800/80 rounded-xl shadow-lg backdrop-blur-sm">
+          <div className="space-y-4">
+            <h2 className="text-3xl font-bold text-center">Welcome</h2>
+            <form className="space-y-4">
+              <div>
+                <Input
+                  type="email"
+                  placeholder="Email"
+                  value={email}
+                  onChange={(e) => setEmail(e.target.value)}
+                />
+              </div>
+              <div>
+                <Input
+                  type="password"
+                  placeholder="Password"
+                  value={password}
+                  onChange={(e) => setPassword(e.target.value)}
+                />
+              </div>
+              <div className="space-y-2">
+                <Button
+                  onClick={handleSignIn}
+                  className="w-full"
+                  type="button"
+                >
+                  Sign In
+                </Button>
+                <Button
+                  onClick={handleSignUp}
+                  className="w-full"
+                  variant="outline"
+                  type="button"
+                >
+                  Sign Up
+                </Button>
+              </div>
+            </form>
+          </div>
+        </div>
       </div>
     );
   }
