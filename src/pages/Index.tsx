@@ -12,7 +12,7 @@ import { Auth } from "@supabase/auth-ui-react";
 import { supabase } from "@/integrations/supabase/client";
 import { Button } from "@/components/ui/button";
 import { useToast } from "@/components/ui/use-toast";
-import { Theme } from "@supabase/auth-ui-shared";
+import { ThemeSupa } from '@supabase/auth-ui-shared';
 
 const initialTransactions: Transaction[] = [
   {
@@ -37,22 +37,6 @@ const initialTransactions: Transaction[] = [
     date: "2024-03-08",
   },
 ];
-
-const getExpenseData = () => {
-  const expensesByCategory: { [key: string]: number } = {};
-  initialTransactions
-    .filter((t) => t.type === "expense")
-    .forEach((transaction) => {
-      expensesByCategory[transaction.category] = (expensesByCategory[transaction.category] || 0) + transaction.amount;
-    });
-
-  const colors = ["#FF6B6B", "#4ECDC4", "#45B7D1", "#96CEB4", "#FFEEAD"];
-  return Object.entries(expensesByCategory).map(([name, value], index) => ({
-    name,
-    value,
-    color: colors[index % colors.length],
-  }));
-};
 
 const Index = () => {
   const [transactions, setTransactions] = useState<Transaction[]>(initialTransactions);
@@ -104,6 +88,22 @@ const Index = () => {
     setTransactions(transactions.filter((t) => t.id !== id));
   };
 
+  const getExpenseData = () => {
+    const expensesByCategory: { [key: string]: number } = {};
+    transactions
+      .filter((t) => t.type === "expense")
+      .forEach((transaction) => {
+        expensesByCategory[transaction.category] = (expensesByCategory[transaction.category] || 0) + transaction.amount;
+      });
+
+    const colors = ["#FF6B6B", "#4ECDC4", "#45B7D1", "#96CEB4", "#FFEEAD"];
+    return Object.entries(expensesByCategory).map(([name, value], index) => ({
+      name,
+      value,
+      color: colors[index % colors.length],
+    }));
+  };
+
   const { income, expenses, balance } = calculateTotals();
 
   if (showAuthChoice) {
@@ -133,21 +133,23 @@ const Index = () => {
   }
 
   if (isAuthRequired && !supabase.auth.getSession()) {
-    const theme: Theme = {
-      default: {
-        colors: {
-          brand: '#0EA5E9',
-          brandAccent: '#0284C7',
-        },
-      },
-    };
-
     return (
       <div className="min-h-screen bg-gradient-to-br from-[#F2FCE2] to-[#D3E4FD] dark:from-[#1A1F2C] dark:to-[#2C1A2F] flex items-center justify-center">
         <div className="bg-white/80 dark:bg-gray-800/80 p-8 rounded-2xl shadow-xl max-w-md w-full mx-4">
           <Auth 
             supabaseClient={supabase}
-            appearance={{ theme }}
+            appearance={{ 
+              theme: ThemeSupa,
+              variables: {
+                default: {
+                  colors: {
+                    brand: '#0EA5E9',
+                    brandAccent: '#0284C7',
+                  },
+                },
+              },
+            }}
+            providers={["google"]}
             localization={{
               variables: {
                 sign_in: {
@@ -155,6 +157,12 @@ const Index = () => {
                   password_label: 'كلمة المرور',
                   button_label: 'تسجيل الدخول',
                 },
+                sign_up: {
+                  email_label: 'البريد الإلكتروني',
+                  password_label: 'كلمة المرور',
+                  button_label: 'إنشاء حساب',
+                },
+                social_provider_text: 'تسجيل الدخول باستخدام جوجل',
               },
             }}
           />
