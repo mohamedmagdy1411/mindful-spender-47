@@ -149,6 +149,8 @@ const Index = () => {
                 },
               },
             }}
+            view="sign_in"
+            showLinks={false}
             providers={["google"]}
             localization={{
               variables: {
@@ -156,13 +158,16 @@ const Index = () => {
                   email_label: 'البريد الإلكتروني',
                   password_label: 'كلمة المرور',
                   button_label: 'تسجيل الدخول',
+                  email_input_placeholder: 'أدخل بريدك الإلكتروني',
+                  password_input_placeholder: 'أدخل كلمة المرور',
                 },
                 sign_up: {
                   email_label: 'البريد الإلكتروني',
                   password_label: 'كلمة المرور',
                   button_label: 'إنشاء حساب',
+                  email_input_placeholder: 'أدخل بريدك الإلكتروني',
+                  password_input_placeholder: 'أدخل كلمة المرور',
                 },
-                social_provider_text: 'تسجيل الدخول باستخدام جوجل',
               },
             }}
           />
