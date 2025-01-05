@@ -7,6 +7,11 @@ import { AIAssistant } from "@/components/dashboard/AIAssistant";
 import { Transaction } from "@/types/props";
 import { useLanguageStore, translations } from "@/stores/languageStore";
 import { LanguageSwitcher } from "@/components/LanguageSwitcher";
+import { useAuthStore } from "@/stores/authStore";
+import { Auth } from "@supabase/auth-ui-react";
+import { supabase } from "@/integrations/supabase/client";
+import { Button } from "@/components/ui/button";
+import { useToast } from "@/components/ui/use-toast";
 
 const initialTransactions: Transaction[] = [
   {
@@ -36,6 +41,9 @@ const Index = () => {
   const [transactions, setTransactions] = useState<Transaction[]>(initialTransactions);
   const { language } = useLanguageStore();
   const t = translations[language];
+  const { isAuthRequired, setAuthRequired } = useAuthStore();
+  const [showAuthChoice, setShowAuthChoice] = useState(true);
+  const { toast } = useToast();
 
   const calculateTotals = () => {
     const income = transactions
@@ -47,61 +55,74 @@ const Index = () => {
     return { income, expenses, balance: income - expenses };
   };
 
-  const getExpenseData = () => {
-    const expensesByCategory = transactions
-      .filter((t) => t.type === "expense")
-      .reduce((acc, t) => {
-        acc[t.category] = (acc[t.category] || 0) + t.amount;
-        return acc;
-      }, {} as Record<string, number>);
-
-    const colors = [
-      "#3B82F6", // Blue
-      "#10B981", // Green
-      "#F59E0B", // Yellow
-      "#6366F1", // Indigo
-      "#EC4899", // Pink
-      "#8B5CF6", // Purple
-      "#14B8A6", // Teal
-      "#F43F5E", // Rose
-    ];
-
-    return Object.entries(expensesByCategory).map(([name, value], index) => ({
-      name,
-      value,
-      color: colors[index % colors.length],
-    }));
-  };
-
-  const handleAddTransaction = (newTransaction: Omit<Transaction, "id" | "date">) => {
-    setTransactions((prev) => [
-      {
-        ...newTransaction,
-        id: Math.random().toString(36).substr(2, 9),
-        date: new Date().toISOString().split("T")[0],
-      },
-      ...prev,
-    ]);
-  };
-
-  const handleUpdateTransaction = (
-    id: string,
-    updatedTransaction: Omit<Transaction, "id" | "date">
-  ) => {
-    setTransactions((prev) =>
-      prev.map((t) =>
-        t.id === id
-          ? { ...t, ...updatedTransaction }
-          : t
-      )
-    );
-  };
-
-  const handleDeleteTransaction = (id: string) => {
-    setTransactions((prev) => prev.filter((t) => t.id !== id));
+  const handleAuthChoice = (required: boolean) => {
+    setAuthRequired(required);
+    setShowAuthChoice(false);
+    toast({
+      title: required ? "تم تفعيل المصادقة" : "تم تعطيل المصادقة",
+      description: required ? "يمكنك الآن تسجيل الدخول لحفظ بياناتك" : "يمكنك استخدام التطبيق بدون تسجيل دخول",
+    });
   };
 
   const { income, expenses, balance } = calculateTotals();
+
+  if (showAuthChoice) {
+    return (
+      <div className="min-h-screen bg-gradient-to-br from-[#F2FCE2] to-[#D3E4FD] dark:from-[#1A1F2C] dark:to-[#2C1A2F] flex items-center justify-center">
+        <div className="bg-white/80 dark:bg-gray-800/80 p-8 rounded-2xl shadow-xl max-w-md w-full mx-4">
+          <h2 className="text-2xl font-bold text-center mb-6">اختر طريقة استخدام التطبيق</h2>
+          <div className="space-y-4">
+            <Button 
+              className="w-full text-lg py-6"
+              variant="outline"
+              onClick={() => handleAuthChoice(true)}
+            >
+              استخدام التطبيق مع حساب
+            </Button>
+            <Button 
+              className="w-full text-lg py-6"
+              variant="outline"
+              onClick={() => handleAuthChoice(false)}
+            >
+              استخدام التطبيق بدون حساب
+            </Button>
+          </div>
+        </div>
+      </div>
+    );
+  }
+
+  if (isAuthRequired && !supabase.auth.getSession()) {
+    return (
+      <div className="min-h-screen bg-gradient-to-br from-[#F2FCE2] to-[#D3E4FD] dark:from-[#1A1F2C] dark:to-[#2C1A2F] flex items-center justify-center">
+        <div className="bg-white/80 dark:bg-gray-800/80 p-8 rounded-2xl shadow-xl max-w-md w-full mx-4">
+          <Auth 
+            supabaseClient={supabase}
+            appearance={{
+              theme: 'default',
+              variables: {
+                default: {
+                  colors: {
+                    brand: '#0EA5E9',
+                    brandAccent: '#0284C7',
+                  },
+                },
+              },
+            }}
+            localization={{
+              variables: {
+                sign_in: {
+                  email_label: 'البريد الإلكتروني',
+                  password_label: 'كلمة المرور',
+                  button_label: 'تسجيل الدخول',
+                },
+              },
+            }}
+          />
+        </div>
+      </div>
+    );
+  }
 
   return (
     <div className="min-h-screen bg-gradient-to-br from-[#F2FCE2] to-[#D3E4FD] dark:from-[#1A1F2C] dark:to-[#2C1A2F]" dir={language === 'ar' ? 'rtl' : 'ltr'}>
