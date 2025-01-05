@@ -8,11 +8,10 @@ import { Transaction } from "@/types/props";
 import { useLanguageStore, translations } from "@/stores/languageStore";
 import { LanguageSwitcher } from "@/components/LanguageSwitcher";
 import { useAuthStore } from "@/stores/authStore";
-import { Auth } from "@supabase/auth-ui-react";
+import { AuthUI } from "@/components/auth/AuthUI";
 import { supabase } from "@/integrations/supabase/client";
 import { Button } from "@/components/ui/button";
 import { useToast } from "@/components/ui/use-toast";
-import { ThemeSupa } from '@supabase/auth-ui-shared';
 
 const initialTransactions: Transaction[] = [
   {
@@ -133,47 +132,7 @@ const Index = () => {
   }
 
   if (isAuthRequired && !supabase.auth.getSession()) {
-    return (
-      <div className="min-h-screen bg-gradient-to-br from-[#F2FCE2] to-[#D3E4FD] dark:from-[#1A1F2C] dark:to-[#2C1A2F] flex items-center justify-center">
-        <div className="bg-white/80 dark:bg-gray-800/80 p-8 rounded-2xl shadow-xl max-w-md w-full mx-4">
-          <Auth 
-            supabaseClient={supabase}
-            appearance={{ 
-              theme: ThemeSupa,
-              variables: {
-                default: {
-                  colors: {
-                    brand: '#0EA5E9',
-                    brandAccent: '#0284C7',
-                  },
-                },
-              },
-            }}
-            view="sign_in"
-            showLinks={false}
-            providers={["google"]}
-            localization={{
-              variables: {
-                sign_in: {
-                  email_label: 'البريد الإلكتروني',
-                  password_label: 'كلمة المرور',
-                  button_label: 'تسجيل الدخول',
-                  email_input_placeholder: 'أدخل بريدك الإلكتروني',
-                  password_input_placeholder: 'أدخل كلمة المرور',
-                },
-                sign_up: {
-                  email_label: 'البريد الإلكتروني',
-                  password_label: 'كلمة المرور',
-                  button_label: 'إنشاء حساب',
-                  email_input_placeholder: 'أدخل بريدك الإلكتروني',
-                  password_input_placeholder: 'أدخل كلمة المرور',
-                },
-              },
-            }}
-          />
-        </div>
-      </div>
-    );
+    return <AuthUI />;
   }
 
   return (
