@@ -109,21 +109,21 @@ const Index = () => {
     return (
       <div className="min-h-screen bg-gradient-to-br from-[#F2FCE2] to-[#D3E4FD] dark:from-[#1A1F2C] dark:to-[#2C1A2F] flex items-center justify-center">
         <div className="bg-white/80 dark:bg-gray-800/80 p-8 rounded-2xl shadow-xl max-w-md w-full mx-4">
-          <h2 className="text-2xl font-bold text-center mb-6">اختر طريقة استخدام التطبيق</h2>
+          <h2 className="text-2xl font-bold text-center mb-6">{t.chooseAppUsage}</h2>
           <div className="space-y-4">
             <Button 
               className="w-full text-lg py-6"
               variant="outline"
               onClick={() => handleAuthChoice(true)}
             >
-              استخدام التطبيق مع حساب
+              {t.useWithAccount}
             </Button>
             <Button 
               className="w-full text-lg py-6"
               variant="outline"
               onClick={() => handleAuthChoice(false)}
             >
-              استخدام التطبيق بدون حساب
+              {t.useWithoutAccount}
             </Button>
           </div>
         </div>
