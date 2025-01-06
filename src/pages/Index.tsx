@@ -13,19 +13,39 @@ import { supabase } from "@/integrations/supabase/client";
 import { Button } from "@/components/ui/button";
 import { useToast } from "@/components/ui/use-toast";
 import { useQuery, useMutation, useQueryClient } from "@tanstack/react-query";
+import { Session } from "@supabase/supabase-js";
 
 const Index = () => {
   const [showAuthChoice, setShowAuthChoice] = useState(true);
+  const [session, setSession] = useState<Session | null>(null);
   const { language } = useLanguageStore();
   const t = translations[language];
   const { isAuthRequired, setAuthRequired } = useAuthStore();
   const { toast } = useToast();
   const queryClient = useQueryClient();
 
+  // Check for session changes
+  useEffect(() => {
+    supabase.auth.getSession().then(({ data: { session } }) => {
+      setSession(session);
+    });
+
+    const {
+      data: { subscription },
+    } = supabase.auth.onAuthStateChange((_event, session) => {
+      setSession(session);
+    });
+
+    return () => subscription.unsubscribe();
+  }, []);
+
   // Fetch transactions from Supabase
   const { data: transactions = [], isLoading } = useQuery({
     queryKey: ['transactions'],
     queryFn: async () => {
+      if (!session?.user) {
+        return [];
+      }
       const { data, error } = await supabase
         .from('transactions')
         .select('*')
@@ -34,15 +54,19 @@ const Index = () => {
       if (error) throw error;
       return data as Transaction[];
     },
+    enabled: !!session?.user, // Only run query if user is authenticated
   });
 
   // Add transaction mutation
   const addTransactionMutation = useMutation({
     mutationFn: async (newTransaction: Omit<Transaction, "id" | "date">) => {
+      if (!session?.user) throw new Error("User not authenticated");
+      
       const { data, error } = await supabase
         .from('transactions')
         .insert([{
           ...newTransaction,
+          user_id: session.user.id, // Add user_id to match RLS policy
           date: new Date().toISOString().split('T')[0],
         }])
         .select()
@@ -62,6 +86,8 @@ const Index = () => {
   // Update transaction mutation
   const updateTransactionMutation = useMutation({
     mutationFn: async ({ id, transaction }: { id: string, transaction: Omit<Transaction, "id" | "date"> }) => {
+      if (!session?.user) throw new Error("User not authenticated");
+      
       const { data, error } = await supabase
         .from('transactions')
         .update(transaction)
@@ -83,6 +109,8 @@ const Index = () => {
   // Delete transaction mutation
   const deleteTransactionMutation = useMutation({
     mutationFn: async (id: string) => {
+      if (!session?.user) throw new Error("User not authenticated");
+      
       const { error } = await supabase
         .from('transactions')
         .delete()
@@ -173,7 +201,7 @@ const Index = () => {
     );
   }
 
-  if (isAuthRequired && !supabase.auth.getSession()) {
+  if (isAuthRequired && !session) {
     return <AuthUI />;
   }
 
