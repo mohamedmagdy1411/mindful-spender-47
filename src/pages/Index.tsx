@@ -1,4 +1,4 @@
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import { BalanceCard } from "@/components/dashboard/BalanceCard";
 import { ExpenseChart } from "@/components/dashboard/ExpenseChart";
 import { RecentTransactions } from "@/components/dashboard/RecentTransactions";
@@ -12,38 +12,91 @@ import { AuthUI } from "@/components/auth/AuthUI";
 import { supabase } from "@/integrations/supabase/client";
 import { Button } from "@/components/ui/button";
 import { useToast } from "@/components/ui/use-toast";
-
-const initialTransactions: Transaction[] = [
-  {
-    id: "1",
-    type: "expense",
-    amount: 120,
-    category: "Groceries",
-    date: "2024-03-10",
-  },
-  {
-    id: "2",
-    type: "income",
-    amount: 2500,
-    category: "Salary",
-    date: "2024-03-09",
-  },
-  {
-    id: "3",
-    type: "expense",
-    amount: 50,
-    category: "Transport",
-    date: "2024-03-08",
-  },
-];
+import { useQuery, useMutation, useQueryClient } from "@tanstack/react-query";
 
 const Index = () => {
-  const [transactions, setTransactions] = useState<Transaction[]>(initialTransactions);
+  const [showAuthChoice, setShowAuthChoice] = useState(true);
   const { language } = useLanguageStore();
   const t = translations[language];
   const { isAuthRequired, setAuthRequired } = useAuthStore();
-  const [showAuthChoice, setShowAuthChoice] = useState(true);
   const { toast } = useToast();
+  const queryClient = useQueryClient();
+
+  // Fetch transactions from Supabase
+  const { data: transactions = [], isLoading } = useQuery({
+    queryKey: ['transactions'],
+    queryFn: async () => {
+      const { data, error } = await supabase
+        .from('transactions')
+        .select('*')
+        .order('date', { ascending: false });
+      
+      if (error) throw error;
+      return data as Transaction[];
+    },
+  });
+
+  // Add transaction mutation
+  const addTransactionMutation = useMutation({
+    mutationFn: async (newTransaction: Omit<Transaction, "id" | "date">) => {
+      const { data, error } = await supabase
+        .from('transactions')
+        .insert([{
+          ...newTransaction,
+          date: new Date().toISOString().split('T')[0],
+        }])
+        .select()
+        .single();
+      
+      if (error) throw error;
+      return data;
+    },
+    onSuccess: () => {
+      queryClient.invalidateQueries({ queryKey: ['transactions'] });
+      toast({
+        title: t.transactionAdded,
+      });
+    },
+  });
+
+  // Update transaction mutation
+  const updateTransactionMutation = useMutation({
+    mutationFn: async ({ id, transaction }: { id: string, transaction: Omit<Transaction, "id" | "date"> }) => {
+      const { data, error } = await supabase
+        .from('transactions')
+        .update(transaction)
+        .eq('id', id)
+        .select()
+        .single();
+      
+      if (error) throw error;
+      return data;
+    },
+    onSuccess: () => {
+      queryClient.invalidateQueries({ queryKey: ['transactions'] });
+      toast({
+        title: t.transactionUpdated,
+      });
+    },
+  });
+
+  // Delete transaction mutation
+  const deleteTransactionMutation = useMutation({
+    mutationFn: async (id: string) => {
+      const { error } = await supabase
+        .from('transactions')
+        .delete()
+        .eq('id', id);
+      
+      if (error) throw error;
+    },
+    onSuccess: () => {
+      queryClient.invalidateQueries({ queryKey: ['transactions'] });
+      toast({
+        title: t.transactionDeleted,
+      });
+    },
+  });
 
   const calculateTotals = () => {
     const income = transactions
@@ -59,32 +112,21 @@ const Index = () => {
     setAuthRequired(required);
     setShowAuthChoice(false);
     toast({
-      title: required ? "تم تفعيل المصادقة" : "تم تعطيل المصادقة",
+      title: required ? t.useWithAccount : t.useWithoutAccount,
       description: required ? "يمكنك الآن تسجيل الدخول لحفظ بياناتك" : "يمكنك استخدام التطبيق بدون تسجيل دخول",
     });
   };
 
   const handleAddTransaction = (newTransaction: Omit<Transaction, "id" | "date">) => {
-    const transaction: Transaction = {
-      ...newTransaction,
-      id: crypto.randomUUID(),
-      date: new Date().toISOString().split('T')[0],
-    };
-    setTransactions([transaction, ...transactions]);
+    addTransactionMutation.mutate(newTransaction);
   };
 
   const handleUpdateTransaction = (id: string, updatedTransaction: Omit<Transaction, "id" | "date">) => {
-    setTransactions(
-      transactions.map((t) =>
-        t.id === id
-          ? { ...t, ...updatedTransaction }
-          : t
-      )
-    );
+    updateTransactionMutation.mutate({ id, transaction: updatedTransaction });
   };
 
   const handleDeleteTransaction = (id: string) => {
-    setTransactions(transactions.filter((t) => t.id !== id));
+    deleteTransactionMutation.mutate(id);
   };
 
   const getExpenseData = () => {
@@ -133,6 +175,14 @@ const Index = () => {
 
   if (isAuthRequired && !supabase.auth.getSession()) {
     return <AuthUI />;
+  }
+
+  if (isLoading) {
+    return (
+      <div className="min-h-screen bg-gradient-to-br from-[#F2FCE2] to-[#D3E4FD] dark:from-[#1A1F2C] dark:to-[#2C1A2F] flex items-center justify-center">
+        <div className="animate-spin rounded-full h-32 w-32 border-b-2 border-[#33C3F0]"></div>
+      </div>
+    );
   }
 
   return (
