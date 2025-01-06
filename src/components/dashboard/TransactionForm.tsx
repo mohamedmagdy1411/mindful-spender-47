@@ -1,4 +1,4 @@
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import {
@@ -9,6 +9,7 @@ import {
   SelectValue,
 } from "@/components/ui/select";
 import { toast } from "sonner";
+import { useDebounce } from "@/hooks/useDebounce";
 
 interface TransactionFormProps {
   onSubmit: (transaction: {
@@ -28,9 +29,24 @@ export const TransactionForm = ({ onSubmit, initialValues, onCancel }: Transacti
   const [type, setType] = useState<'income' | 'expense'>(initialValues?.type || 'expense');
   const [amount, setAmount] = useState(initialValues?.amount?.toString() || '');
   const [category, setCategory] = useState(initialValues?.category || '');
+  
+  // Debounce the form values to prevent too many saves
+  const debouncedType = useDebounce(type, 1000);
+  const debouncedAmount = useDebounce(amount, 1000);
+  const debouncedCategory = useDebounce(category, 1000);
 
-  const handleSubmit = (e: React.FormEvent) => {
-    e.preventDefault();
+  // Auto-save effect
+  useEffect(() => {
+    if (debouncedAmount && debouncedCategory) {
+      handleSubmit();
+      toast.success("Changes saved automatically");
+    }
+  }, [debouncedType, debouncedAmount, debouncedCategory]);
+
+  const handleSubmit = (e?: React.FormEvent) => {
+    if (e) {
+      e.preventDefault();
+    }
     
     if (!amount || !category) {
       toast.error("Please fill in all fields");
