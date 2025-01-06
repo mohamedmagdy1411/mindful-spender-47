@@ -38,10 +38,17 @@ export const TransactionForm = ({ onSubmit, initialValues, onCancel }: Transacti
   // Auto-save effect
   useEffect(() => {
     if (debouncedAmount && debouncedCategory) {
-      handleSubmit();
-      toast.success("Changes saved automatically");
+      const numericAmount = parseFloat(debouncedAmount);
+      if (!isNaN(numericAmount)) {
+        onSubmit({
+          type: debouncedType,
+          amount: numericAmount,
+          category: debouncedCategory,
+        });
+        toast.success("Changes saved automatically");
+      }
     }
-  }, [debouncedType, debouncedAmount, debouncedCategory]);
+  }, [debouncedType, debouncedAmount, debouncedCategory, onSubmit]);
 
   const handleSubmit = (e?: React.FormEvent) => {
     if (e) {
@@ -53,9 +60,15 @@ export const TransactionForm = ({ onSubmit, initialValues, onCancel }: Transacti
       return;
     }
 
+    const numericAmount = parseFloat(amount);
+    if (isNaN(numericAmount)) {
+      toast.error("Please enter a valid amount");
+      return;
+    }
+
     onSubmit({
       type,
-      amount: parseFloat(amount),
+      amount: numericAmount,
       category,
     });
   };
