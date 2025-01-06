@@ -1,4 +1,4 @@
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { ArrowDownIcon, ArrowUpIcon, PencilIcon, TrashIcon, PlusIcon } from "lucide-react";
@@ -12,6 +12,8 @@ import { TransactionForm } from "./TransactionForm";
 import { toast } from "sonner";
 import { BaseProps } from "@/types/props";
 import { useLanguageStore, translations, formatNumber } from "@/stores/languageStore";
+import { supabase } from "@/integrations/supabase/client";
+import { useNavigate } from "react-router-dom";
 
 interface Transaction {
   id: string;
@@ -30,37 +32,110 @@ interface RecentTransactionsProps extends BaseProps {
 
 export const RecentTransactions = ({
   transactions,
-  onAddTransaction,
-  onUpdateTransaction,
-  onDeleteTransaction,
   className,
 }: RecentTransactionsProps) => {
   const { language } = useLanguageStore();
   const t = translations[language];
   const [isAddDialogOpen, setIsAddDialogOpen] = useState(false);
   const [editingTransaction, setEditingTransaction] = useState<Transaction | null>(null);
+  const navigate = useNavigate();
+
+  useEffect(() => {
+    const checkAuth = async () => {
+      const { data: { session } } = await supabase.auth.getSession();
+      if (!session) {
+        navigate('/login');
+      }
+    };
+    checkAuth();
+  }, [navigate]);
 
   const formatCurrency = (amount: number) => {
     return formatNumber(amount, language);
   };
 
-  const handleAdd = (transaction: Omit<Transaction, 'id' | 'date'>) => {
-    onAddTransaction?.(transaction);
-    setIsAddDialogOpen(false);
-    toast.success(t.transactionAdded);
-  };
+  const handleAdd = async (transaction: Omit<Transaction, 'id' | 'date'>) => {
+    try {
+      const { data: { session } } = await supabase.auth.getSession();
+      if (!session?.user) {
+        toast.error("Please login to add transactions");
+        return;
+      }
 
-  const handleUpdate = (transaction: Omit<Transaction, 'id' | 'date'>) => {
-    if (editingTransaction) {
-      onUpdateTransaction?.(editingTransaction.id, transaction);
-      setEditingTransaction(null);
-      toast.success(t.transactionUpdated);
+      const { data, error } = await supabase
+        .from('transactions')
+        .insert([
+          {
+            ...transaction,
+            user_id: session.user.id,
+          }
+        ])
+        .select()
+        .single();
+
+      if (error) throw error;
+
+      setIsAddDialogOpen(false);
+      toast.success(t.transactionAdded);
+      window.location.reload(); // Refresh to show new transaction
+    } catch (error) {
+      console.error('Add transaction error:', error);
+      toast.error("Failed to add transaction");
     }
   };
 
-  const handleDelete = (id: string) => {
-    onDeleteTransaction?.(id);
-    toast.success(t.transactionDeleted);
+  const handleUpdate = async (transaction: Omit<Transaction, 'id' | 'date'>) => {
+    if (editingTransaction) {
+      try {
+        const { data: { session } } = await supabase.auth.getSession();
+        if (!session?.user) {
+          toast.error("Please login to update transactions");
+          return;
+        }
+
+        const { error } = await supabase
+          .from('transactions')
+          .update({
+            ...transaction,
+            user_id: session.user.id,
+          })
+          .eq('id', editingTransaction.id)
+          .eq('user_id', session.user.id);
+
+        if (error) throw error;
+
+        setEditingTransaction(null);
+        toast.success(t.transactionUpdated);
+        window.location.reload(); // Refresh to show updated transaction
+      } catch (error) {
+        console.error('Update transaction error:', error);
+        toast.error("Failed to update transaction");
+      }
+    }
+  };
+
+  const handleDelete = async (id: string) => {
+    try {
+      const { data: { session } } = await supabase.auth.getSession();
+      if (!session?.user) {
+        toast.error("Please login to delete transactions");
+        return;
+      }
+
+      const { error } = await supabase
+        .from('transactions')
+        .delete()
+        .eq('id', id)
+        .eq('user_id', session.user.id);
+
+      if (error) throw error;
+
+      toast.success(t.transactionDeleted);
+      window.location.reload(); // Refresh to show deletion
+    } catch (error) {
+      console.error('Delete transaction error:', error);
+      toast.error("Failed to delete transaction");
+    }
   };
 
   return (

@@ -10,6 +10,8 @@ import {
 } from "@/components/ui/select";
 import { toast } from "sonner";
 import { useDebounce } from "@/hooks/useDebounce";
+import { supabase } from "@/integrations/supabase/client";
+import { useNavigate } from "react-router-dom";
 
 interface TransactionFormProps {
   onSubmit: (transaction: {
@@ -29,28 +31,63 @@ export const TransactionForm = ({ onSubmit, initialValues, onCancel }: Transacti
   const [type, setType] = useState<'income' | 'expense'>(initialValues?.type || 'expense');
   const [amount, setAmount] = useState(initialValues?.amount?.toString() || '');
   const [category, setCategory] = useState(initialValues?.category || '');
+  const navigate = useNavigate();
   
   // Debounce the form values to prevent too many saves
   const debouncedType = useDebounce(type, 1000);
   const debouncedAmount = useDebounce(amount, 1000);
   const debouncedCategory = useDebounce(category, 1000);
 
+  useEffect(() => {
+    const checkAuth = async () => {
+      const { data: { session } } = await supabase.auth.getSession();
+      if (!session) {
+        navigate('/login');
+      }
+    };
+    checkAuth();
+  }, [navigate]);
+
   // Auto-save effect
   useEffect(() => {
-    if (debouncedAmount && debouncedCategory) {
-      const numericAmount = parseFloat(debouncedAmount);
-      if (!isNaN(numericAmount)) {
-        onSubmit({
-          type: debouncedType,
-          amount: numericAmount,
-          category: debouncedCategory,
-        });
-        toast.success("Changes saved automatically");
+    const autoSave = async () => {
+      if (debouncedAmount && debouncedCategory) {
+        const numericAmount = parseFloat(debouncedAmount);
+        if (!isNaN(numericAmount)) {
+          try {
+            const { data: { session } } = await supabase.auth.getSession();
+            if (!session?.user) {
+              toast.error("Please login to save transactions");
+              return;
+            }
+
+            const transaction = {
+              type: debouncedType,
+              amount: numericAmount,
+              category: debouncedCategory,
+              user_id: session.user.id,
+              date: new Date().toISOString()
+            };
+
+            onSubmit({
+              type: debouncedType,
+              amount: numericAmount,
+              category: debouncedCategory,
+            });
+            
+            toast.success("Changes saved automatically");
+          } catch (error) {
+            console.error('Auto-save error:', error);
+            toast.error("Failed to save changes automatically");
+          }
+        }
       }
-    }
+    };
+
+    autoSave();
   }, [debouncedType, debouncedAmount, debouncedCategory, onSubmit]);
 
-  const handleSubmit = (e?: React.FormEvent) => {
+  const handleSubmit = async (e?: React.FormEvent) => {
     if (e) {
       e.preventDefault();
     }
@@ -66,11 +103,22 @@ export const TransactionForm = ({ onSubmit, initialValues, onCancel }: Transacti
       return;
     }
 
-    onSubmit({
-      type,
-      amount: numericAmount,
-      category,
-    });
+    try {
+      const { data: { session } } = await supabase.auth.getSession();
+      if (!session?.user) {
+        toast.error("Please login to save transactions");
+        return;
+      }
+
+      onSubmit({
+        type,
+        amount: numericAmount,
+        category,
+      });
+    } catch (error) {
+      console.error('Submit error:', error);
+      toast.error("Failed to save transaction");
+    }
   };
 
   return (
