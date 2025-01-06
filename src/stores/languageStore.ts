@@ -31,10 +31,7 @@ export const translations = {
     deleteTransaction: "Delete Transaction",
     transactionAdded: "Transaction added successfully",
     transactionUpdated: "Transaction updated successfully",
-    transactionDeleted: "Transaction deleted successfully",
-    useWithAccount: "Use with Account",
-    useWithoutAccount: "Use without Account",
-    chooseAppUsage: "Choose how to use the app"
+    transactionDeleted: "Transaction deleted successfully"
   },
   ar: {
     currentBalance: "الرصيد الحالي",
@@ -59,10 +56,7 @@ export const translations = {
     deleteTransaction: "حذف المعاملة",
     transactionAdded: "تمت إضافة المعاملة بنجاح",
     transactionUpdated: "تم تحديث المعاملة بنجاح",
-    transactionDeleted: "تم حذف المعاملة بنجاح",
-    useWithAccount: "استخدام التطبيق مع حساب",
-    useWithoutAccount: "استخدام التطبيق بدون حساب",
-    chooseAppUsage: "اختر طريقة استخدام التطبيق"
+    transactionDeleted: "تم حذف المعاملة بنجاح"
   }
 };
 
