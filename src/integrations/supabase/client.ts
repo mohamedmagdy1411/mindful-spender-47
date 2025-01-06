@@ -5,7 +5,7 @@ const supabaseAnonKey = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYm
 
 export const supabase = createClient(supabaseUrl, supabaseAnonKey, {
   auth: {
-    persistSession: false, // Since we're not using auth anymore
-    autoRefreshToken: false,
+    persistSession: true, // Enable session persistence
+    autoRefreshToken: true, // Enable token auto-refresh
   },
 });
