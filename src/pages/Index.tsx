@@ -33,7 +33,7 @@ const initialTransactions: Transaction[] = [
 ];
 
 const Index = () => {
-  const [transactions, setTransactions] = useState<Transaction[]>(initialTransactions);
+  const [transactions] = useState<Transaction[]>(initialTransactions);
   const { language } = useLanguageStore();
   const t = translations[language];
 
@@ -71,34 +71,6 @@ const Index = () => {
       value,
       color: colors[index % colors.length],
     }));
-  };
-
-  const handleAddTransaction = (newTransaction: Omit<Transaction, "id" | "date">) => {
-    setTransactions((prev) => [
-      {
-        ...newTransaction,
-        id: Math.random().toString(36).substr(2, 9),
-        date: new Date().toISOString().split("T")[0],
-      },
-      ...prev,
-    ]);
-  };
-
-  const handleUpdateTransaction = (
-    id: string,
-    updatedTransaction: Omit<Transaction, "id" | "date">
-  ) => {
-    setTransactions((prev) =>
-      prev.map((t) =>
-        t.id === id
-          ? { ...t, ...updatedTransaction }
-          : t
-      )
-    );
-  };
-
-  const handleDeleteTransaction = (id: string) => {
-    setTransactions((prev) => prev.filter((t) => t.id !== id));
   };
 
   const { income, expenses, balance } = calculateTotals();
@@ -139,7 +111,6 @@ const Index = () => {
           
           <div className="md:col-span-12 animate-fade-in [animation-delay:800ms]">
             <AIAssistant
-              onAddTransaction={handleAddTransaction}
               className="backdrop-blur-sm bg-white/60 dark:bg-gray-800/40 shadow-lg hover:shadow-xl transition-all duration-300 rounded-2xl border border-white/20 hover:translate-y-[-4px] group"
             />
           </div>
@@ -147,9 +118,6 @@ const Index = () => {
           <div className="md:col-span-12 animate-fade-in [animation-delay:1000ms]">
             <RecentTransactions
               transactions={transactions}
-              onAddTransaction={handleAddTransaction}
-              onUpdateTransaction={handleUpdateTransaction}
-              onDeleteTransaction={handleDeleteTransaction}
               className="backdrop-blur-sm bg-white/60 dark:bg-gray-800/40 shadow-lg hover:shadow-xl transition-all duration-300 rounded-2xl border border-white/20 hover:translate-y-[-4px] group"
             />
           </div>
