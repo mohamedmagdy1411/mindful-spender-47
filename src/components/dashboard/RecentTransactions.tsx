@@ -14,6 +14,7 @@ import { BaseProps } from "@/types/props";
 import { useLanguageStore, translations, formatNumber } from "@/stores/languageStore";
 import { supabase } from "@/integrations/supabase/client";
 import { useNavigate } from "react-router-dom";
+import { useQuery, useQueryClient } from "@tanstack/react-query";
 
 interface Transaction {
   id: string;
@@ -25,13 +26,10 @@ interface Transaction {
 
 interface RecentTransactionsProps extends BaseProps {
   transactions: Transaction[];
-  onAddTransaction?: (transaction: Omit<Transaction, 'id' | 'date'>) => void;
-  onUpdateTransaction?: (id: string, transaction: Omit<Transaction, 'id' | 'date'>) => void;
-  onDeleteTransaction?: (id: string) => void;
 }
 
 export const RecentTransactions = ({
-  transactions,
+  transactions: initialTransactions,
   className,
 }: RecentTransactionsProps) => {
   const { language } = useLanguageStore();
@@ -39,6 +37,26 @@ export const RecentTransactions = ({
   const [isAddDialogOpen, setIsAddDialogOpen] = useState(false);
   const [editingTransaction, setEditingTransaction] = useState<Transaction | null>(null);
   const navigate = useNavigate();
+  const queryClient = useQueryClient();
+
+  // Fetch transactions using React Query
+  const { data: transactions = initialTransactions } = useQuery({
+    queryKey: ['transactions'],
+    queryFn: async () => {
+      const { data: { session } } = await supabase.auth.getSession();
+      if (!session) {
+        navigate('/login');
+        return [];
+      }
+      const { data, error } = await supabase
+        .from('transactions')
+        .select('*')
+        .order('date', { ascending: false });
+      
+      if (error) throw error;
+      return data as Transaction[];
+    },
+  });
 
   useEffect(() => {
     const checkAuth = async () => {
@@ -77,7 +95,8 @@ export const RecentTransactions = ({
 
       setIsAddDialogOpen(false);
       toast.success(t.transactionAdded);
-      window.location.reload(); // Refresh to show new transaction
+      // Invalidate and refetch transactions
+      queryClient.invalidateQueries({ queryKey: ['transactions'] });
     } catch (error) {
       console.error('Add transaction error:', error);
       toast.error("Failed to add transaction");
@@ -106,7 +125,8 @@ export const RecentTransactions = ({
 
         setEditingTransaction(null);
         toast.success(t.transactionUpdated);
-        window.location.reload(); // Refresh to show updated transaction
+        // Invalidate and refetch transactions
+        queryClient.invalidateQueries({ queryKey: ['transactions'] });
       } catch (error) {
         console.error('Update transaction error:', error);
         toast.error("Failed to update transaction");
@@ -131,7 +151,8 @@ export const RecentTransactions = ({
       if (error) throw error;
 
       toast.success(t.transactionDeleted);
-      window.location.reload(); // Refresh to show deletion
+      // Invalidate and refetch transactions
+      queryClient.invalidateQueries({ queryKey: ['transactions'] });
     } catch (error) {
       console.error('Delete transaction error:', error);
       toast.error("Failed to delete transaction");
