@@ -75,6 +75,15 @@ const Index = () => {
 
   const { income, expenses, balance } = calculateTotals();
 
+  const handleAddTransaction = (transaction: {
+    type: 'income' | 'expense';
+    amount: number;
+    category: string;
+  }) => {
+    // This is now handled by React Query in the RecentTransactions component
+    console.log('Transaction added:', transaction);
+  };
+
   return (
     <div className="min-h-screen bg-gradient-to-br from-[#F2FCE2] to-[#D3E4FD] dark:from-[#1A1F2C] dark:to-[#2C1A2F]" dir={language === 'ar' ? 'rtl' : 'ltr'}>
       <div className="container mx-auto py-8 px-4">
@@ -111,6 +120,7 @@ const Index = () => {
           
           <div className="md:col-span-12 animate-fade-in [animation-delay:800ms]">
             <AIAssistant
+              onAddTransaction={handleAddTransaction}
               className="backdrop-blur-sm bg-white/60 dark:bg-gray-800/40 shadow-lg hover:shadow-xl transition-all duration-300 rounded-2xl border border-white/20 hover:translate-y-[-4px] group"
             />
           </div>
