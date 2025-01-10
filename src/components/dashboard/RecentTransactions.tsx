@@ -12,8 +12,6 @@ import { TransactionForm } from "./TransactionForm";
 import { toast } from "sonner";
 import { BaseProps } from "@/types/props";
 import { useLanguageStore, translations, formatNumber } from "@/stores/languageStore";
-import { supabase } from "@/integrations/supabase/client";
-import { useNavigate } from "react-router-dom";
 import { useQuery, useQueryClient } from "@tanstack/react-query";
 
 interface Transaction {
@@ -28,6 +26,8 @@ interface RecentTransactionsProps extends BaseProps {
   transactions: Transaction[];
 }
 
+const LOCAL_STORAGE_KEY = 'transactions';
+
 export const RecentTransactions = ({
   transactions: initialTransactions,
   className,
@@ -36,37 +36,31 @@ export const RecentTransactions = ({
   const t = translations[language];
   const [isAddDialogOpen, setIsAddDialogOpen] = useState(false);
   const [editingTransaction, setEditingTransaction] = useState<Transaction | null>(null);
-  const navigate = useNavigate();
   const queryClient = useQueryClient();
 
-  // Fetch transactions using React Query
+  // Function to load transactions from localStorage
+  const loadTransactions = () => {
+    const stored = localStorage.getItem(LOCAL_STORAGE_KEY);
+    return stored ? JSON.parse(stored) : initialTransactions;
+  };
+
+  // Function to save transactions to localStorage
+  const saveTransactions = (transactions: Transaction[]) => {
+    localStorage.setItem(LOCAL_STORAGE_KEY, JSON.stringify(transactions));
+  };
+
+  // Fetch transactions using React Query with localStorage
   const { data: transactions = initialTransactions } = useQuery({
     queryKey: ['transactions'],
-    queryFn: async () => {
-      const { data: { session } } = await supabase.auth.getSession();
-      if (!session) {
-        navigate('/login');
-        return [];
-      }
-      const { data, error } = await supabase
-        .from('transactions')
-        .select('*')
-        .order('date', { ascending: false });
-      
-      if (error) throw error;
-      return data as Transaction[];
-    },
+    queryFn: loadTransactions,
   });
 
+  // Save transactions to localStorage whenever they change
   useEffect(() => {
-    const checkAuth = async () => {
-      const { data: { session } } = await supabase.auth.getSession();
-      if (!session) {
-        navigate('/login');
-      }
-    };
-    checkAuth();
-  }, [navigate]);
+    if (transactions) {
+      saveTransactions(transactions);
+    }
+  }, [transactions]);
 
   const formatCurrency = (amount: number) => {
     return formatNumber(amount, language);
@@ -74,29 +68,17 @@ export const RecentTransactions = ({
 
   const handleAdd = async (transaction: Omit<Transaction, 'id' | 'date'>) => {
     try {
-      const { data: { session } } = await supabase.auth.getSession();
-      if (!session?.user) {
-        toast.error("Please login to add transactions");
-        return;
-      }
+      const newTransaction = {
+        ...transaction,
+        id: crypto.randomUUID(),
+        date: new Date().toISOString(),
+      };
 
-      const { data, error } = await supabase
-        .from('transactions')
-        .insert([
-          {
-            ...transaction,
-            user_id: session.user.id,
-          }
-        ])
-        .select()
-        .single();
-
-      if (error) throw error;
-
+      const updatedTransactions = [...transactions, newTransaction];
+      saveTransactions(updatedTransactions);
       setIsAddDialogOpen(false);
       toast.success(t.transactionAdded);
-      // Invalidate and refetch transactions
-      queryClient.invalidateQueries({ queryKey: ['transactions'] });
+      queryClient.setQueryData(['transactions'], updatedTransactions);
     } catch (error) {
       console.error('Add transaction error:', error);
       toast.error("Failed to add transaction");
@@ -106,27 +88,15 @@ export const RecentTransactions = ({
   const handleUpdate = async (transaction: Omit<Transaction, 'id' | 'date'>) => {
     if (editingTransaction) {
       try {
-        const { data: { session } } = await supabase.auth.getSession();
-        if (!session?.user) {
-          toast.error("Please login to update transactions");
-          return;
-        }
-
-        const { error } = await supabase
-          .from('transactions')
-          .update({
-            ...transaction,
-            user_id: session.user.id,
-          })
-          .eq('id', editingTransaction.id)
-          .eq('user_id', session.user.id);
-
-        if (error) throw error;
-
+        const updatedTransactions = transactions.map((t) =>
+          t.id === editingTransaction.id
+            ? { ...t, ...transaction }
+            : t
+        );
+        saveTransactions(updatedTransactions);
         setEditingTransaction(null);
         toast.success(t.transactionUpdated);
-        // Invalidate and refetch transactions
-        queryClient.invalidateQueries({ queryKey: ['transactions'] });
+        queryClient.setQueryData(['transactions'], updatedTransactions);
       } catch (error) {
         console.error('Update transaction error:', error);
         toast.error("Failed to update transaction");
@@ -136,23 +106,10 @@ export const RecentTransactions = ({
 
   const handleDelete = async (id: string) => {
     try {
-      const { data: { session } } = await supabase.auth.getSession();
-      if (!session?.user) {
-        toast.error("Please login to delete transactions");
-        return;
-      }
-
-      const { error } = await supabase
-        .from('transactions')
-        .delete()
-        .eq('id', id)
-        .eq('user_id', session.user.id);
-
-      if (error) throw error;
-
+      const updatedTransactions = transactions.filter((t) => t.id !== id);
+      saveTransactions(updatedTransactions);
       toast.success(t.transactionDeleted);
-      // Invalidate and refetch transactions
-      queryClient.invalidateQueries({ queryKey: ['transactions'] });
+      queryClient.setQueryData(['transactions'], updatedTransactions);
     } catch (error) {
       console.error('Delete transaction error:', error);
       toast.error("Failed to delete transaction");
